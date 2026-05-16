@@ -1,0 +1,1216 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "API Type: switchBox",
+    "description": "# Introduction                                                           \nIt is **specific API** of BleBox devices with **API type:** *switchBox* <br><br> **Please check** **API type** and **API level** (version) before use, <br> **if you don't see the expected field** in response from a real device then **hardware version do not support this feature**.",
+    "version": "20200831",
+    "x-logo": {
+      "url": "https://static.blebox.eu/technical/return_to_technical.png",
+      "altText": "BleBox Technical",
+      "href": "https://technical.blebox.eu/"
+    }
+  },
+  "x-tagGroups": [
+    {
+      "name": "Common wBox API",
+      "tags": [
+        "General",
+        "Network"
+      ]
+    },
+    {
+      "name": "switchBox API",
+      "tags": [
+        "Control & State",
+        "Control with GET",
+        "Settings"
+      ]
+    }
+  ],
+  "servers": [
+    {
+      "url": "http://192.168.4.1",
+      "description": "Controller's web server - connecting via device's WiFi AP"
+    },
+    {
+      "url": "http://IP_in_local_network",
+      "description": "Controller's web server - connecting via local network - please change IP"
+    },
+    {
+      "url": "http://device.blebox",
+      "description": "Controller's web server - connecting via local network - for own DNS resolving"
+    }
+  ],
+  "paths": {
+    "/info": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Information about device",
+        "description": "Returns **general information** about device",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "device": {
+                      "description": "**General** information about device",
+                      "type": "object",
+                      "properties": {
+                        "deviceName": {
+                          "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/deviceName"
+                        },
+                        "product": {
+                          "description": "Product name for informational purpose only - do not use it in any application logic",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "shutterBoxV2"
+                        },
+                        "type": {
+                          "description": "**API type** of BleBox device - it indicate what **device-specific API** should be used",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "shutterBox"
+                        },
+                        "apiLevel": {
+                          "description": "**API level** of BleBox device - it indicate what version of **common and device-specific API** should be used",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "20200831"
+                        },
+                        "hv": {
+                          "description": "Hardware version for informational purpose only - do not use it in any application logic",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "9.1d"
+                        },
+                        "fv": {
+                          "description": "Firmware version for informational purpose only - do not use it in any application logic",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "0.987"
+                        },
+                        "id": {
+                          "description": "Unique identification number of BleBox device",
+                          "type": "string",
+                          "minLength": 1,
+                          "maxLength": 32,
+                          "example": "g650e32d2217"
+                        },
+                        "ip": {
+                          "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/ip"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/device/state": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Information about device",
+        "description": "Returns **general information** about device <br><br>**It is deprecated** -> look at:",
+        "responses": {
+          "200": {
+            "$ref": "#/paths/~1info/get/responses/200"
+          }
+        },
+        "externalDocs": {
+          "url": "#tag/General/paths/~1info/get",
+          "description": "Information about device - /info"
+        },
+        "deprecated": true
+      }
+    },
+    "/api/device/uptime": {
+      "get": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Device upTime",
+        "description": "Returns information about **number of seconds from boot**",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "upTimeS": {
+                      "description": "Number of **seconds** since the device was turned on",
+                      "type": "integer",
+                      "format": "uint32_t",
+                      "minimum": 0,
+                      "maximum": 4294967295,
+                      "example": 243269
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/device/network": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Network information",
+        "description": "Returns information about **internal WiFi AP** or about connected **local WiFi network**",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "description": "All information connected with network",
+                  "type": "object",
+                  "properties": {
+                    "ssid": {
+                      "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/ssid"
+                    },
+                    "bssid": {
+                      "description": "BSSID of connected WiFi network. <br> **Empty string** indicates that **no WiFi network was found**",
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 17,
+                      "example": "70:4f:25:24:11:ae"
+                    },
+                    "ip": {
+                      "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/ip"
+                    },
+                    "mac": {
+                      "description": "MAC address of BleBox device. <br> This interface connect to Access Point (to local WiFi network)",
+                      "type": "string",
+                      "minLength": 17,
+                      "maxLength": 17,
+                      "example": "bb:50:ec:2d:22:17"
+                    },
+                    "station_status": {
+                      "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/station_status"
+                    },
+                    "tunnel_status": {
+                      "description": "<br>Status of **cloud connection** (remote access), where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>Waiting for stable WiFi connection</td> </tr> <tr> <td>**1**</td> <td>Connecting</td> </tr> <tr> <td>**2**</td> <td>Internet network is unreachable (DNS failed)</td> </tr> <tr> <td>**3**</td> <td>Internet network is unreachable (server not found)</td> </tr> <tr> <td>**4**</td> <td>Connection broken (connection was estabilished but it's broken now)</td> </tr> <tr> <td>**5**</td> <td>Connected</td> </tr> <tr> <td>**6**</td> <td>Disabled by user</td> </tr> </table>",
+                      "type": "integer",
+                      "format": "uint8_t",
+                      "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5,
+                        6
+                      ],
+                      "example": 5
+                    },
+                    "apEnable": {
+                      "$ref": "#/paths/~1api~1device~1set/post/requestBody/content/application~1json/schema/properties/network/properties/apEnable"
+                    },
+                    "apSSID": {
+                      "$ref": "#/paths/~1api~1device~1set/post/requestBody/content/application~1json/schema/properties/network/properties/apSSID"
+                    },
+                    "apPasswd": {
+                      "$ref": "#/paths/~1api~1device~1set/post/requestBody/content/application~1json/schema/properties/network/properties/apPasswd"
+                    },
+                    "channel": {
+                      "description": "Channel of **internal** WiFi Access Point. **If device is connected to local WiFi** network then internal WiFi **channel is the same** as local WiFi Access Point's channel",
+                      "type": "integer",
+                      "format": "uint8_t",
+                      "minimum": 1,
+                      "maximum": 13,
+                      "example": 7
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/wifi/status": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Local WiFi Status",
+        "description": "Returns information about **connected local WiFi network** and **if scanning is in progress** <br><br>**It is deprecated** -> look at:",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "scanning": {
+                      "description": "<br>Parameter that show if **WiFi scanning is in progress**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**false**</td> <td>disabled</td> </tr> <tr> <td>**true**</td> <td>enabled</td> </tr> </table>",
+                      "type": "boolean",
+                      "format": "string",
+                      "enum": [
+                        true,
+                        false
+                      ],
+                      "example": false
+                    },
+                    "ssid": {
+                      "description": "SSID of connected WiFi network. <br> **Empty string** indicates that **no WiFi network was selected**",
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 32,
+                      "example": "WiFi_Name"
+                    },
+                    "ip": {
+                      "description": "IPv4 of BleBox device connected to local WiFi network. <br> **Empty string** indicates that **no WiFi network was connected**",
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 15,
+                      "example": "192.168.1.11"
+                    },
+                    "station_status": {
+                      "description": "<br>Status of current **WiFi connection**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>Not configured</td> </tr> <tr> <td>**1**</td> <td>Connecting</td> </tr> <tr> <td>**2**</td> <td>Wrong password</td> </tr> <tr> <td>**3**</td> <td>WiFi network not found</td> </tr> <tr> <td>**4**</td> <td>Communication with WiFi network failed</td> </tr> <tr> <td>**5**</td> <td>Connected</td> </tr> </table>",
+                      "type": "integer",
+                      "format": "uint8_t",
+                      "enum": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        5
+                      ],
+                      "example": 5
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "externalDocs": {
+          "url": "#tag/Common-wBox-API/paths/~1api~1device~1network/get",
+          "description": "Network information - /api/device/network"
+        },
+        "deprecated": true
+      }
+    },
+    "/api/device/set": {
+      "post": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Set internal access Point's settings",
+        "description": "**Allows to set** interal access Point's **ssid and password**. Allows also to **turn off internal AP**.",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "network": {
+                    "description": "**Internal** access Point's settings",
+                    "type": "object",
+                    "properties": {
+                      "apEnable": {
+                        "description": "<br>Parameter that show if **internal** WiFi Access Point is enabled, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**false**</td> <td>disabled</td> </tr> <tr> <td>**true**</td> <td>enabled</td> </tr> </table><br> If **false** - **apSSID** and **apPasswd** can be ignored.",
+                        "type": "boolean",
+                        "format": "string",
+                        "enum": [
+                          false,
+                          true
+                        ],
+                        "example": true
+                      },
+                      "apSSID": {
+                        "description": "SSID of **internal** WiFi access Point",
+                        "type": "string",
+                        "minLength": 1,
+                        "maxLength": 32,
+                        "example": "shutterBox-g650e32d2217"
+                      },
+                      "apPasswd": {
+                        "description": "Password of **internal** WiFi Access Point. <br> WPA2-PSK is used. <br>Empty string or 'null' indicates that internal AP is set to open mode (without password).",
+                        "type": "string",
+                        "pattern": "^$|^.{8,64}$",
+                        "nullable": true,
+                        "example": "my_secret_password"
+                      }
+                    }
+                  }
+                },
+                "required": [
+                  "network"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "device": {
+                      "$ref": "#/paths/~1info/get/responses/200/content/application~1json/schema/properties/device"
+                    },
+                    "network": {
+                      "$ref": "#/paths/~1api~1device~1network/get/responses/200/content/application~1json/schema"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/wifi/scan": {
+      "get": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Perform WiFi scan and get results",
+        "description": "**Perform WiFi scan** and **return list of found WiFi** networks. Return conflict if scanning is in progress",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ap": {
+                      "description": "**List of** found **WiFi** networks",
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ssid": {
+                            "description": "SSID (name) of found network",
+                            "type": "string",
+                            "minLength": 1,
+                            "maxLength": 32,
+                            "example": "WiFi_Name"
+                          },
+                          "rssi": {
+                            "description": "<br>**Signal strength** of found network, where:<br> <table> <tr> <td>From:</td> <td>To:</td> <td>Description:</td> </tr> <tr> <td>**-67**</td> <td>**0**</td> <td>Very good</td> </tr> <tr> <td>**-73**</td> <td>**-68**</td> <td>Good</td> </tr> <tr> <td>**-80**</td> <td>**-74**</td> <td>Poor</td> </tr> <tr> <td>**-127**</td> <td>**-81**</td> <td>Unstable/Unusable</td> </tr> </table>",
+                            "type": "integer",
+                            "format": "int8_t",
+                            "minimum": -127,
+                            "maximum": 0,
+                            "example": -60
+                          },
+                          "enc": {
+                            "description": "<br>**Encryption mode** of found network, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>Open network (without password) - unsafe, but can be used</td> </tr> <tr> <td>**1**</td> <td>WEP encryption - unsafe - can not be used</td> </tr> <tr> <td>**2**</td> <td>WPA encryption - unsafe - can not be used</td> </tr> <tr> <td>**3**</td> <td>WPA2 encryption - safe if properly configured - can be used (recomended)</td> </tr> <tr> <td>**4**</td> <td>WPA/WPA2 encryption - unsafe, but can be used as WPA2</td> </tr> </table>",
+                            "type": "integer",
+                            "format": "uint8_t",
+                            "enum": [
+                              0,
+                              1,
+                              2,
+                              3,
+                              4,
+                              5
+                            ],
+                            "example": 3
+                          }
+                        }
+                      }
+                    }
+                  }
+                },
+                "example": {
+                  "ap": [
+                    {
+                      "ssid": "Funny_WiFi_Name",
+                      "rssi": -60,
+                      "enc": 3
+                    },
+                    {
+                      "ssid": "Less_Funny_WiFi_Name",
+                      "rssi": -75,
+                      "enc": 4
+                    },
+                    {
+                      "ssid": "Not_Funny_WiFi_Name",
+                      "rssi": -90,
+                      "enc": 0
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "409": {
+            "description": "Conflict"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/wifi/connect": {
+      "post": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Perform WiFi connect",
+        "description": "Perform connect to local WiFi network",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ssid": {
+                    "description": "SSID of WiFi network. <br> **Empty string** will disconnect from WiFi network",
+                    "type": "string",
+                    "minLength": 0,
+                    "maxLength": 32,
+                    "example": "WiFi_Name"
+                  },
+                  "pwd": {
+                    "description": "Password to WiFi network. Empty string or 'null' indicates open mode (without password).",
+                    "type": "string",
+                    "minLength": 0,
+                    "maxLength": 64,
+                    "nullable": true,
+                    "example": "my_secret_password"
+                  }
+                },
+                "required": [
+                  "ssid"
+                ]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "ssid": {
+                      "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/ssid"
+                    },
+                    "station_status": {
+                      "$ref": "#/paths/~1api~1wifi~1status/get/responses/200/content/application~1json/schema/properties/station_status"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "$ref": "#/paths/~1api~1device~1set/post/responses/400"
+          }
+        }
+      }
+    },
+    "/api/wifi/disconnect": {
+      "post": {
+        "tags": [
+          "Network"
+        ],
+        "summary": "Perform WiFi disconnect",
+        "description": "**Perform disconnect** from current local **WiFi network**",
+        "responses": {
+          "200": {
+            "$ref": "#/paths/~1api~1wifi~1connect/post/responses/200"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/ota/update": {
+      "post": {
+        "tags": [
+          "General"
+        ],
+        "summary": "Perform firmware update",
+        "description": "**Perform firmware update**. Return conflict if update is in progress",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "409": {
+            "$ref": "#/paths/~1api~1wifi~1scan/get/responses/409"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/state": {
+      "get": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "Device state",
+        "description": "Returns information about **relays state**",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "State set",
+        "description": "Allow to set desired relay state (ON, OFF, TOGGLE, FORTIME)",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/relaySet"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/relay/state": {
+      "get": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "Relay state",
+        "description": "Returns information about **relays state** <br><br>**It is deprecated** -> look at:",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          }
+        },
+        "externalDocs": {
+          "url": "#tag/Control-and-State/paths/~1state/get",
+          "description": "Device state - /state"
+        },
+        "deprecated": true
+      }
+    },
+    "/state/extended": {
+      "get": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "Extended device state",
+        "description": "Returns **extended information** about **device and relays**<br>  *(all parameters needed to display user interface)*",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayExtendedState"
+          }
+        }
+      },
+      "deprecated": false
+    },
+    "/api/relay/extended/state": {
+      "get": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "Extended relay state",
+        "description": "**extended information** about **device and relays**<br>  *(all parameters needed to display user interface)*<br> <br><br>**It is deprecated** -> look at:",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayExtendedState"
+          }
+        },
+        "externalDocs": {
+          "url": "#tag/Control-and-State/paths/~1state~1extended/get",
+          "description": "Extended device state - /state/extended"
+        },
+        "deprecated": true
+      }
+    },
+    "/api/relay/set": {
+      "post": {
+        "tags": [
+          "Control & State"
+        ],
+        "summary": "Set relay",
+        "description": "Allows to **set** desired **relay state** <br> *(turn on, turn off, toggle state, turn on for time)* <br><br>**It is deprecated** -> look at:",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/relaySet"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        },
+        "externalDocs": {
+          "url": "#tag/Control-and-State/paths/~1state/post",
+          "description": "Device state - /state"
+        },
+        "deprecated": true
+      }
+    },
+    "/s/{state}": {
+      "get": {
+        "tags": [
+          "Control with GET"
+        ],
+        "summary": "Set relay",
+        "description": "**Set relay state** using *GET* request",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/state"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/s/1/forTime/{timeS}/ns/0": {
+      "get": {
+        "tags": [
+          "Control with GET"
+        ],
+        "summary": "Set relay for a given time",
+        "description": "**Set relay state to ON for a given time in seconds** using GET request",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/timeS"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/relayState"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/settings/state": {
+      "get": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Settings state",
+        "description": "Return device's **specific** settings",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/settingsState"
+          }
+        },
+        "deprecated": false
+      }
+    },
+    "/api/settings/set": {
+      "post": {
+        "tags": [
+          "Settings"
+        ],
+        "summary": "Settings set",
+        "description": "Allow to set device's **specific** settings",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/settingsSet"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/settingsState"
+          },
+          "400": {
+            "$ref": "#/components/responses/400"
+          }
+        },
+        "deprecated": false
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "state": {
+        "name": "state",
+        "in": "path",
+        "schema": {
+          "$ref": "#/components/schemas/stateSet"
+        },
+        "required": true
+      },
+      "timeS": {
+        "name": "timeS",
+        "in": "path",
+        "schema": {
+          "$ref": "#/components/schemas/timeS"
+        },
+        "required": true
+      }
+    },
+    "requestBodies": {
+      "relaySet": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "relays": {
+                  "description": "List of relays state",
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "relay": {
+                        "$ref": "#/components/schemas/relay"
+                      },
+                      "state": {
+                        "$ref": "#/components/schemas/stateSet"
+                      },
+                      "forTime": {
+                        "$ref": "#/components/schemas/forTime"
+                      }
+                    },
+                    "required": [
+                      "relay",
+                      "state"
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "settingsSet": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "settings": {
+                  "type": "object",
+                  "properties": {
+                    "deviceName": {
+                      "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/deviceName"
+                    },
+                    "tunnel": {
+                      "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/tunnel"
+                    },
+                    "statusLed": {
+                      "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/statusLed"
+                    },
+                    "powerMeasuring": {
+                      "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/powerMeasuring"
+                    },
+                    "relays": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stateAfterRestart": {
+                            "$ref": "#/components/schemas/stateAfterRestart"
+                          },
+                          "defaultForTime": {
+                            "$ref": "#/components/schemas/defaultForTime"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "400": {
+        "description": "Bad request"
+      },
+      "relayState": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "relays": {
+                  "description": "List of **relays state**",
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "relay": {
+                        "$ref": "#/components/schemas/relay"
+                      },
+                      "state": {
+                        "$ref": "#/components/schemas/stateGet"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "relayExtendedState": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "relays": {
+                  "description": "List of **relays state** with **additional information**",
+                  "type": "array",
+                  "minItems": 1,
+                  "maxItems": 1,
+                  "items": {
+                    "type": "object",
+                    "properties": {
+                      "relay": {
+                        "$ref": "#/components/schemas/relay"
+                      },
+                      "state": {
+                        "$ref": "#/components/schemas/stateGet"
+                      },
+                      "stateAfterRestart": {
+                        "$ref": "#/components/schemas/stateAfterRestart"
+                      },
+                      "defaultForTime": {
+                        "$ref": "#/components/schemas/defaultForTime"
+                      }
+                    }
+                  }
+                },
+                "powerMeasuring": {
+                  "$ref": "#/components/schemas/powerMeasuring"
+                },
+                "sensors": {
+                  "$ref": "#/components/schemas/sensors"
+                }
+              }
+            }
+          }
+        }
+      },
+      "settingsState": {
+        "description": "OK",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "settings": {
+                  "description": "Object with **specific** settings",
+                  "type": "object",
+                  "properties": {
+                    "deviceName": {
+                      "description": "**Name** of BleBox device/controller",
+                      "type": "string",
+                      "minLength": 0,
+                      "maxLength": 31,
+                      "example": "My BleBox device name"
+                    },
+                    "tunnel": {
+                      "description": "Allows to **enable or disable** connection with **the BleBox's cloud** and decide whether events generated by this device should be log to **the BleBox's cloud** (necessary for push notifications), the user can view the event log through the wBox application.",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "description": "<br>Allow to **disable or enable function**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>disabled</td> </tr> <tr> <td>**1**</td> <td>enabled</td> </tr> </table>",
+                          "type": "integer",
+                          "format": "uint8_t",
+                          "enum": [
+                            0,
+                            1
+                          ],
+                          "example": 1
+                        },
+                        "logEnabled": {
+                          "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/tunnel/properties/enabled"
+                        }
+                      }
+                    },
+                    "statusLed": {
+                      "description": "Allows to **enable** or **disable** extended status notification using built in **LED**",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/tunnel/properties/enabled"
+                        }
+                      }
+                    },
+                    "powerMeasuring": {
+                      "description": "Allows to enable or disable **power measuring module** (**powerConsumption** and **activePower** sensor). If hardware doesn't support power measuring then **this object doesn't exist**",
+                      "type": "object",
+                      "properties": {
+                        "enabled": {
+                          "$ref": "#/components/responses/settingsState/content/application~1json/schema/properties/settings/properties/tunnel/properties/enabled"
+                        }
+                      }
+                    },
+                    "relays": {
+                      "type": "array",
+                      "minItems": 1,
+                      "maxItems": 1,
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "stateAfterRestart": {
+                            "$ref": "#/components/schemas/stateAfterRestart"
+                          },
+                          "defaultForTime": {
+                            "$ref": "#/components/schemas/defaultForTime"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "schemas": {
+      "forTime": {
+        "description": "Module \"forTime\" which contain parameters of this functionality. **Requires** **state == 1 (ON)**",
+        "type": "object",
+        "properties": {
+          "timeS": {
+            "$ref": "#/components/schemas/timeS"
+          },
+          "ns": {
+            "$ref": "#/components/schemas/ns"
+          }
+        },
+        "required": [
+          "timeS",
+          "ns"
+        ]
+      },
+      "powerConsumption": {
+        "type": "object",
+        "properties": {
+          "periodS": {
+            "$ref": "#/components/schemas/periodS"
+          },
+          "value": {
+            "$ref": "#/components/schemas/kwh_value"
+          }
+        }
+      },
+      "powerMeasuring": {
+        "description": "Data from **power measuring module**, see also section **sensor** for **activePower** sensor data. If hardware doesn't support power measuring then always **\"enabled\" == 0**",
+        "type": "object",
+        "properties": {
+          "enabled": {
+            "description": "<br>Indicates whether **the function is disabled or enabled**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>disabled</td> </tr> <tr> <td>**1**</td> <td>enabled</td> </tr> </table>",
+            "type": "integer",
+            "format": "uint8_t",
+            "enum": [
+              0,
+              1
+            ],
+            "example": 1
+          },
+          "powerConsumption": {
+            "description": "**Energy consumption** from the last time period. If field **\"enabled\" == 0** then **array doesn't exist**.",
+            "type": "array",
+            "minItems": 1,
+            "maxItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/powerConsumption"
+            }
+          }
+        }
+      },
+      "sensor": {
+        "description": "Sensor and measurement information",
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/sensor_type"
+          },
+          "value": {
+            "$ref": "#/components/schemas/sensor_value"
+          },
+          "trend": {
+            "$ref": "#/components/schemas/sensor_trend"
+          },
+          "state": {
+            "$ref": "#/components/schemas/sensor_state"
+          }
+        }
+      },
+      "sensors": {
+        "description": "**List of active sensors**. If there is no active sensors then array doesn't exist",
+        "type": "array",
+        "minItems": 0,
+        "items": {
+          "$ref": "#/components/schemas/sensor"
+        }
+      },
+      "sensor_type": {
+        "description": "**Type** of power measurement",
+        "type": "string",
+        "enum": [
+          "activePower"
+        ]
+      },
+      "sensor_value": {
+        "description": "Current value of measurement - **power of connected device** (active power counted in Watt)",
+        "type": "integer",
+        "format": "uint16_t",
+        "minimum": 0,
+        "example": 520
+      },
+      "sensor_trend": {
+        "description": "Trend - not used, always 0",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0
+        ],
+        "example": 0
+      },
+      "sensor_state": {
+        "description": "<br>**Status of sensor**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**4**</td> <td>Active mode without error reporting (if 4 occurs then it is always 4)</td> </tr> <table>",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          4
+        ],
+        "example": 4
+      },
+      "kwh_value": {
+        "description": "**Energy consuption** in **kWh**. Always 3 decimal places",
+        "type": "number",
+        "format": "float - 3 decimal places",
+        "minimum": 0,
+        "example": 0.521
+      },
+      "periodS": {
+        "description": "Period of measurement in seconds - applies to the \"value\" field.",
+        "type": "integer",
+        "format": "uint8_t",
+        "minimum": 0,
+        "maximum": 3600,
+        "example": 3600
+      },
+      "relay": {
+        "description": "**ID** - relay number",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0
+        ],
+        "example": 0
+      },
+      "stateGet": {
+        "description": "<br>Parameter that show **state of relay**, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>OFF</td> </tr> <tr> <td>**1**</td> <td>ON</td> </tr> </table>",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0,
+          1
+        ],
+        "example": 1
+      },
+      "stateSet": {
+        "description": "<br>**Set state** of relay, where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>OFF</td> </tr> <tr> <td>**1**</td> <td>ON</td> </tr> <tr> <td>**2**</td> <td>Toggle (change to the opposite)</td> </tr> </table>",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0,
+          1,
+          2
+        ],
+        "example": 1
+      },
+      "stateAfterRestart": {
+        "description": "<br>**State of relay after reebot/reset** (power outage), where:<br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>OFF</td> </tr> <tr> <td>**1**</td> <td>ON</td> </tr> <tr> <td>**2**</td> <td>Last state</td> </tr> <tr> <td>**3**</td> <td>Opposed state</td> </tr> </table>",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0,
+          1,
+          2,
+          3
+        ],
+        "example": 2
+      },
+      "defaultForTime": {
+        "description": "Time in **seconds** **for button** \"turn on for time\" in wBox App, where **0 == disabled button**",
+        "type": "integer",
+        "format": "uint16_t",
+        "minimum": 0,
+        "maximum": 65536
+      },
+      "timeS": {
+        "description": "Time in **seconds**",
+        "type": "integer",
+        "format": "uint16_t",
+        "minimum": 0,
+        "maximum": 65535,
+        "example": 30
+      },
+      "ns": {
+        "description": "<br>**Next state** after previous action (e.g. set for time), where: <br> <table> <tr> <td>Enum:</td> <td>Description:</td> </tr> <tr> <td>**0**</td> <td>OFF</td> </tr> </table>",
+        "type": "integer",
+        "format": "uint8_t",
+        "enum": [
+          0
+        ],
+        "example": 0
+      }
+    }
+  }
+}

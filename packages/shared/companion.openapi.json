@@ -1,0 +1,381 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "BleBox Companion API",
+    "version": "0.1.0",
+    "description": "Discovery and CORS-proxy service for the BleBox Device Manager."
+  },
+  "components": {
+    "schemas": {}
+  },
+  "paths": {
+    "/api/health": {
+      "get": {
+        "summary": "Liveness probe",
+        "tags": [
+          "health"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "status": {
+                      "type": "string",
+                      "enum": [
+                        "ok"
+                      ]
+                    },
+                    "uptimeS": {
+                      "type": "number"
+                    }
+                  },
+                  "required": [
+                    "status",
+                    "uptimeS"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discovery/start": {
+      "post": {
+        "summary": "Start an mDNS + subnet scan",
+        "tags": [
+          "discovery"
+        ],
+        "responses": {
+          "202": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "scanning": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "scanning"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discovery/stop": {
+      "post": {
+        "summary": "Stop scanning",
+        "tags": [
+          "discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "scanning": {
+                      "type": "boolean"
+                    }
+                  },
+                  "required": [
+                    "scanning"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/discovery/devices": {
+      "get": {
+        "summary": "Currently discovered BleBox devices",
+        "tags": [
+          "discovery"
+        ],
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "scanning": {
+                      "type": "boolean"
+                    },
+                    "devices": {
+                      "type": "array",
+                      "items": {
+                        "type": "object",
+                        "properties": {
+                          "ip": {
+                            "type": "string"
+                          },
+                          "device": {
+                            "type": "object",
+                            "properties": {
+                              "deviceName": {
+                                "type": "string"
+                              },
+                              "type": {
+                                "type": "string"
+                              },
+                              "product": {
+                                "type": "string"
+                              },
+                              "hv": {
+                                "type": "string"
+                              },
+                              "fv": {
+                                "type": "string"
+                              },
+                              "universe": {
+                                "type": "number"
+                              },
+                              "apiLevel": {
+                                "anyOf": [
+                                  {
+                                    "type": "string"
+                                  },
+                                  {
+                                    "type": "number"
+                                  }
+                                ]
+                              },
+                              "categories": {
+                                "type": "array",
+                                "items": {
+                                  "type": "number"
+                                }
+                              },
+                              "id": {
+                                "type": "string"
+                              },
+                              "ip": {
+                                "type": "string"
+                              },
+                              "availableFv": {
+                                "type": "string",
+                                "nullable": true
+                              }
+                            },
+                            "required": [
+                              "deviceName",
+                              "type",
+                              "id"
+                            ],
+                            "additionalProperties": false
+                          },
+                          "discoveredAt": {
+                            "type": "string"
+                          }
+                        },
+                        "required": [
+                          "ip",
+                          "device",
+                          "discoveredAt"
+                        ],
+                        "additionalProperties": false
+                      }
+                    }
+                  },
+                  "required": [
+                    "scanning",
+                    "devices"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/devices/probe": {
+      "post": {
+        "summary": "Probe a manually entered IP for a BleBox device",
+        "tags": [
+          "devices"
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "ip": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "ip"
+                ],
+                "additionalProperties": false
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "device": {
+                      "type": "object",
+                      "properties": {
+                        "deviceName": {
+                          "type": "string"
+                        },
+                        "type": {
+                          "type": "string"
+                        },
+                        "product": {
+                          "type": "string"
+                        },
+                        "hv": {
+                          "type": "string"
+                        },
+                        "fv": {
+                          "type": "string"
+                        },
+                        "universe": {
+                          "type": "number"
+                        },
+                        "apiLevel": {
+                          "anyOf": [
+                            {
+                              "type": "string"
+                            },
+                            {
+                              "type": "number"
+                            }
+                          ]
+                        },
+                        "categories": {
+                          "type": "array",
+                          "items": {
+                            "type": "number"
+                          }
+                        },
+                        "id": {
+                          "type": "string"
+                        },
+                        "ip": {
+                          "type": "string"
+                        },
+                        "availableFv": {
+                          "type": "string",
+                          "nullable": true
+                        }
+                      },
+                      "required": [
+                        "deviceName",
+                        "type",
+                        "id"
+                      ],
+                      "additionalProperties": false
+                    }
+                  },
+                  "required": [
+                    "device"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "502": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "504": {
+            "description": "Default Response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "message": {
+                      "type": "string"
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
