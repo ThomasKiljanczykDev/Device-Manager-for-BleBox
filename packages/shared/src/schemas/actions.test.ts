@@ -1,6 +1,8 @@
 import { describe, expect, it } from 'vitest';
 import {
   actionSchema,
+  actionSetPayloadSchema,
+  actionsDocumentSchema,
   actionsStateSchema,
   actionWriteSchema,
   allowedActionTypes,
@@ -93,6 +95,24 @@ describe('actionWriteSchema', () => {
   it('strips lastCall from the type but tolerates extra keys being absent', () => {
     const parsed = actionWriteSchema.parse(sample.actions[0]);
     expect('lastCall' in parsed).toBe(false);
+  });
+});
+
+describe('set / document payloads', () => {
+  it('actionSetPayloadSchema wraps a single action and strips lastCall', () => {
+    const result = actionSetPayloadSchema.safeParse({ action: sample.actions[0] });
+    expect(result.success).toBe(true);
+    if (result.success) expect('lastCall' in result.data.action).toBe(false);
+  });
+
+  it('actionSetPayloadSchema rejects an array payload', () => {
+    expect(actionSetPayloadSchema.safeParse({ actions: [] }).success).toBe(false);
+  });
+
+  it('actionsDocumentSchema accepts the full editable document', () => {
+    expect(
+      actionsDocumentSchema.safeParse({ actions: sample.actions.map((a) => a) }).success,
+    ).toBe(true);
   });
 });
 
