@@ -84,14 +84,28 @@ export const actionsStateSchema = z.object({
 export type ActionsState = z.infer<typeof actionsStateSchema>;
 
 /**
- * `POST /api/actions/set` request body. The wrapper key mirrors the documented
- * `/api/settings/set` convention (`{ settings: ... }` → `{ actions: ... }`).
+ * The full actions document as edited in the Monaco JSON editor — the working
+ * draft, not a device payload.
  */
-export const actionsSetPayloadSchema = z.object({
+export const actionsDocumentSchema = z.object({
   actions: z.array(actionWriteSchema),
 });
 
-export type ActionsSetPayload = z.infer<typeof actionsSetPayloadSchema>;
+export type ActionsDocument = z.infer<typeof actionsDocumentSchema>;
+
+/**
+ * `POST /api/actions/set` request body — a single-slot upsert keyed by `id`.
+ *
+ * INFERRED / UNVERIFIED: the action CRUD surface is undocumented. A re-post of
+ * the full `{ actions: [...] }` array returned HTTP 400, so this single-action
+ * wrapper (mirroring `/api/settings/set`'s `{ settings: ... }`) is the working
+ * assumption. See `docs/action-shape.md` — confirm against hardware.
+ */
+export const actionSetPayloadSchema = z.object({
+  action: actionWriteSchema,
+});
+
+export type ActionSetPayload = z.infer<typeof actionSetPayloadSchema>;
 
 // --- fieldsPreferences interpreters ----------------------------------------
 

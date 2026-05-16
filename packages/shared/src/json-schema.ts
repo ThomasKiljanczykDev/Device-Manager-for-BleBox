@@ -1,5 +1,5 @@
 import { zodToJsonSchema } from 'zod-to-json-schema';
-import { actionsSetPayloadSchema } from './schemas/actions';
+import { actionsDocumentSchema } from './schemas/actions';
 import { triggerTypeLabel } from './constants';
 
 /** Minimal JSON Schema node shape — enough to enrich generated schemas. */
@@ -24,12 +24,12 @@ export interface ActionsSchemaOptions {
 }
 
 /**
- * Builds a JSON Schema for the editable actions model, derived from the Zod
- * schema (`actionsSetPayloadSchema`) and enriched with device-specific enum
+ * Builds a JSON Schema for the editable actions document, derived from the Zod
+ * schema (`actionsDocumentSchema`) and enriched with device-specific enum
  * values so Monaco can offer labelled autocompletion and inline validation.
  */
 export function buildActionsJsonSchema(options: ActionsSchemaOptions = {}): JsonSchemaNode {
-  const root = zodToJsonSchema(actionsSetPayloadSchema, {
+  const root = zodToJsonSchema(actionsDocumentSchema, {
     $refStrategy: 'none',
     target: 'jsonSchema7',
   }) as JsonSchemaNode;

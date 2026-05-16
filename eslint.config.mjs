@@ -43,6 +43,13 @@ export default tseslint.config(
     },
   },
   {
+    // shadcn/ui primitives legitimately co-export components and variants.
+    files: ['apps/web/src/components/ui/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     files: ['apps/companion/**/*.ts', 'packages/**/*.ts', 'scripts/**/*.mjs'],
     languageOptions: {
       globals: { ...globals.node },
