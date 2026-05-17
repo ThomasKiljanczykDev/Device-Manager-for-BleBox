@@ -49,14 +49,18 @@ export const useActionsDraftStore = create<ActionsDraftState>((set) => ({
   itemsLimit: 0,
   fieldsPreferences: [],
 
-  loadFromDevice: (ip, state) =>
+  loadFromDevice: (ip, state) => {
+    // `lastCall` is server-managed read-only telemetry — keep it out of the
+    // editable draft so the JSON editor schema and dirty checks stay clean.
+    const actions = state.actions.map(({ lastCall: _lastCall, ...rest }) => rest);
     set({
       ip,
-      working: state.actions,
-      snapshot: state.actions,
-      itemsLimit: state.itemsLimit ?? state.actions.length,
+      working: actions,
+      snapshot: actions,
+      itemsLimit: state.itemsLimit ?? actions.length,
       fieldsPreferences: state.fieldsPreferences ?? [],
-    }),
+    });
+  },
 
   upsertAction: (action) =>
     set((draft) => ({

@@ -1,6 +1,6 @@
 import { zodToJsonSchema } from 'zod-to-json-schema';
 import { actionsDocumentSchema } from './schemas/actions';
-import { triggerTypeLabel } from './constants';
+import { TRIGGER_TYPE_UNCONFIGURED, triggerTypeLabel } from './constants';
 
 /** Minimal JSON Schema node shape — enough to enrich generated schemas. */
 export interface JsonSchemaNode {
@@ -40,10 +40,10 @@ export function buildActionsJsonSchema(options: ActionsSchemaOptions = {}): Json
   const { triggerType, actionType, param } = itemProps;
 
   if (triggerType && options.triggerTypes?.length) {
-    triggerType.enum = options.triggerTypes;
-    triggerType.enumDescriptions = options.triggerTypes.map(
-      (t) => `${t} — ${triggerTypeLabel(t)}`,
-    );
+    // 0 (unconfigured) is always valid — empty action slots use it.
+    const values = [...new Set([TRIGGER_TYPE_UNCONFIGURED, ...options.triggerTypes])];
+    triggerType.enum = values;
+    triggerType.enumDescriptions = values.map((t) => `${t} — ${triggerTypeLabel(t)}`);
     triggerType.description = 'Trigger type (device-specific; 0 = unconfigured)';
   }
 

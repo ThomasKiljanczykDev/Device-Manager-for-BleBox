@@ -8,11 +8,11 @@ describe('buildActionsJsonSchema', () => {
     expect(schema.properties?.actions?.type).toBe('array');
   });
 
-  it('injects device-specific trigger-type enums and labels', () => {
+  it('injects device-specific trigger-type enums and always allows 0', () => {
     const schema = buildActionsJsonSchema({ triggerTypes: [1, 2, 42] });
     const triggerType = schema.properties?.actions?.items?.properties?.triggerType;
-    expect(triggerType?.enum).toEqual([1, 2, 42]);
-    expect(triggerType?.enumDescriptions?.[0]).toMatch(/Short click/);
+    expect(triggerType?.enum).toEqual([0, 1, 2, 42]);
+    expect(triggerType?.enumDescriptions?.[0]).toMatch(/Unconfigured/);
   });
 
   it('documents param placeholders when provided', () => {
