@@ -1,18 +1,13 @@
 # Branding assets
 
-Master logo source files — kept for future reference. Do not edit the
-generated favicons directly; regenerate them from these instead.
-
 | File | What it is |
 |---|---|
-| `blebox-1600-1600-max.xcf` | GIMP source (editable master) |
-| `blebox-dark-1600-1600-max.png` | Logo in a dark circle — used to generate the favicons |
-| `blebox-light-1600-1600-max.png` | Logo mark on a transparent background |
+| `app-icon.png` | Master app icon (1024×1024) — source for the web favicons |
 
 ## Regenerating the favicons
 
 `generate-favicons.mjs` rebuilds the web favicon set into `apps/web/public/`
-from `blebox-dark-1600-1600-max.png`. macOS only (uses the built-in `sips`).
+from `app-icon.png`. macOS only (uses the built-in `sips`).
 
 ```sh
 node assets/branding/generate-favicons.mjs

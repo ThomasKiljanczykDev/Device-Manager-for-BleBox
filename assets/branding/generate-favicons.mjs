@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Regenerates the web favicon set into apps/web/public/ from the dark logo.
+ * Regenerates the web favicon set into apps/web/public/ from the app icon.
  * macOS only — resizing uses the built-in `sips`.
  *
  *   node assets/branding/generate-favicons.mjs
@@ -14,7 +14,7 @@ import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const here = dirname(fileURLToPath(import.meta.url));
-const source = join(here, 'blebox-dark-1600-1600-max.png');
+const source = join(here, 'app-icon.png');
 const outDir = resolve(here, '../../apps/web/public');
 mkdirSync(outDir, { recursive: true });
 
