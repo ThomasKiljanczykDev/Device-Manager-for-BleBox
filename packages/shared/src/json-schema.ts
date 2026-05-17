@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { actionsDocumentSchema } from './schemas/actions';
-import { TRIGGER_TYPE_UNCONFIGURED, triggerTypeLabel } from './constants';
+import { actionTypeLabel, TRIGGER_TYPE_UNCONFIGURED, triggerTypeLabel } from './constants';
 
 /** Minimal JSON Schema node shape — enough to enrich generated schemas. */
 export interface JsonSchemaNode {
@@ -49,7 +49,8 @@ export function buildActionsJsonSchema(options: ActionsSchemaOptions = {}): Json
 
   if (actionType && options.actionTypes?.length) {
     actionType.enum = options.actionTypes;
-    actionType.description = 'Action type — 50 is the HTTP GET action this app writes';
+    actionType.enumDescriptions = options.actionTypes.map((t) => `${t} — ${actionTypeLabel(t)}`);
+    actionType.description = 'Action type (0 = unconfigured, 50 = HTTP GET)';
   }
 
   if (param && options.placeholders?.length) {

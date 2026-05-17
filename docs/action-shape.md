@@ -60,10 +60,10 @@ An empty slot omits `triggerParam`/`intervalS`/`throttleS`:
 | `name` | observed | User label. Empty on unconfigured slots. |
 | `input` | observed | Physical input index the trigger is bound to. |
 | `triggerType` | `1–5` documented (buttonBox `/t/{inputId}/{triggerType}`); `0`, `19`, `42`, `43` observed | `0` = unconfigured. See table below. |
-| `actionType` | observed | `50` = HTTP GET (the only type this app writes). `0` = unconfigured. |
+| `actionType` | observed | `0` = unconfigured. See action-types table below. |
 | `triggerParam` | observed | Numeric parameter; meaningful for power triggers (`42`/`43`). |
 | `intervalS`, `throttleS` | observed | Seconds; apply to power triggers (`42`/`43`). |
-| `param` | observed | The HTTP GET URL. Supports placeholders `{s_state.0}`, `{power_w.0}`. |
+| `param` | observed | For `actionType 50` the HTTP GET URL (placeholders `{s_state.0}`, `{power_w.0}`); empty string for native switch actions (`1/2/3`). |
 | `lastCall` | observed | Server-managed runtime telemetry (`timeElapsedS`, optional `response`). **Read-only — stripped before save.** `timeElapsedS: -1` = never called. |
 
 ### Trigger types
@@ -79,6 +79,20 @@ An empty slot omits `triggerParam`/`intervalS`/`throttleS`:
 | 19 | Device event | observed/inferred (device-level trigger, `input: null`) |
 | 42 | Power above threshold | observed/inferred (`triggerParam` = watts, `0–3680`) |
 | 43 | Power below threshold | observed/inferred |
+
+### Action types
+
+| Value | Label | `param` | Source |
+|---|---|---|---|
+| 0 | Unconfigured | `""` | observed (empty slot) |
+| 1 | Switch ON | `""` | observed on a live switchBox |
+| 2 | Switch OFF | `""` | observed on a live switchBox |
+| 3 | Toggle | `""` | observed on a live switchBox |
+| 50 | HTTP GET | the URL | observed |
+
+`1/2/3` are native actions on the device's own relay; `param` is empty (the
+relay is implicit on single-relay switchBox). `fieldsPreferences` additionally
+lists `7,8,9,10,51,52,53`, which this app does not yet handle.
 
 ### `fieldsPreferences` — the constraint engine
 

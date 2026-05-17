@@ -1,4 +1,9 @@
-import { TRIGGER_TYPE_UNCONFIGURED, type Action } from '@blebox/shared';
+import {
+  ACTION_TYPE,
+  actionTypeLabel,
+  TRIGGER_TYPE_UNCONFIGURED,
+  type Action,
+} from '@blebox/shared';
 
 /** A slot is "configured" once it has a non-zero trigger type. */
 export function isConfigured(action: Action): boolean {
@@ -20,8 +25,10 @@ export function inputsInUse(actions: Action[]): number[] {
   return [...new Set(configuredActions(actions).map((a) => a.input))].sort((a, b) => a - b);
 }
 
-/** Short human summary of an action's effect (the HTTP GET target). */
+/** Short human summary of an action's effect. */
 export function actionSummary(action: Action): string {
-  if (!action.param) return '—';
-  return action.param;
+  if (action.actionType === ACTION_TYPE.httpGet) {
+    return action.param ? `${actionTypeLabel(action.actionType)} ${action.param}` : '—';
+  }
+  return actionTypeLabel(action.actionType);
 }

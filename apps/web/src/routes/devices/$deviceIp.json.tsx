@@ -2,10 +2,10 @@ import { useMemo, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import Editor, { type Monaco } from '@monaco-editor/react';
 import {
+  ACTION_TYPE,
   actionsDocumentSchema,
   allowedTriggerTypes,
   buildActionsJsonSchema,
-  HTTP_GET_ACTION_TYPE,
   paramPlaceholders,
 } from '@blebox/shared';
 import '@/lib/monaco';
@@ -31,7 +31,7 @@ function JsonEditorDialog() {
     () =>
       buildActionsJsonSchema({
         triggerTypes: allowedTriggerTypes(fieldsPreferences, 999),
-        actionTypes: [0, HTTP_GET_ACTION_TYPE],
+        actionTypes: Object.values(ACTION_TYPE),
         placeholders: paramPlaceholders(fieldsPreferences),
       }),
     [fieldsPreferences],

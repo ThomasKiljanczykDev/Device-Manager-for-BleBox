@@ -47,23 +47,45 @@ export function triggerTypeLabel(value: number): string {
 }
 
 /**
- * `actionType` 50 is the generic HTTP-GET action (`param` holds the URL).
- * It is the only action type this app writes — both UI "action kinds" below
- * compile down to it. Observed on the live device; not in any public spec.
+ * Action-type enum. `1/2/3` (native switch, `param: ""`) and `50` (HTTP GET,
+ * `param` = URL) are observed on a live switchBox. Device `fieldsPreferences`
+ * also lists `7,8,9,10,51,52,53` — add them to the labels map below as they
+ * are implemented. See `docs/action-shape.md`.
  */
-export const HTTP_GET_ACTION_TYPE = 50;
+export const ACTION_TYPE = {
+  unconfigured: 0,
+  switchOn: 1,
+  switchOff: 2,
+  switchToggle: 3,
+  httpGet: 50,
+} as const;
 
 /** Empty/unconfigured action slot sentinel. */
-export const ACTION_TYPE_UNCONFIGURED = 0;
+export const ACTION_TYPE_UNCONFIGURED = ACTION_TYPE.unconfigured;
+
+export const ACTION_TYPE_LABELS: Record<number, string> = {
+  0: 'Unconfigured',
+  1: 'Switch ON',
+  2: 'Switch OFF',
+  3: 'Toggle',
+  50: 'HTTP GET',
+};
+
+/** Returns a human label for an action type, falling back to the raw number. */
+export function actionTypeLabel(value: number): string {
+  return ACTION_TYPE_LABELS[value] ?? `Action ${value}`;
+}
 
 /**
- * UI-level action kinds. Both persist as `actionType: 50`; they differ only in
- * how the `param` URL is constructed in the wizard.
+ * UI-level action kinds for the wizard. `switch-device` writes a native switch
+ * action (`actionType` 1/2/3); the other two write an HTTP GET (`actionType`
+ * 50) and differ only in how the `param` URL is built.
  */
-export const ACTION_KINDS = ['blebox-device', 'invoke-url'] as const;
+export const ACTION_KINDS = ['switch-device', 'blebox-device', 'invoke-url'] as const;
 export type ActionKind = (typeof ACTION_KINDS)[number];
 
 export const ACTION_KIND_LABELS: Record<ActionKind, string> = {
+  'switch-device': 'Switch this device',
   'blebox-device': 'BleBox device action',
   'invoke-url': 'Invoke URL (GET)',
 };

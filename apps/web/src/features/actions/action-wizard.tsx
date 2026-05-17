@@ -3,7 +3,8 @@ import { useForm } from '@tanstack/react-form';
 import {
   ACTION_KIND_LABELS,
   ACTION_KINDS,
-  HTTP_GET_ACTION_TYPE,
+  ACTION_TYPE,
+  actionTypeLabel,
   allowedTriggerTypes,
   triggerParamRange,
   triggerTypeLabel,
@@ -25,6 +26,8 @@ import { useActionsDraftStore } from '@/stores/actions-draft';
 import { useDeviceList } from '@/features/devices/queries';
 import { commandsFor, CONTROLLABLE_TYPES } from './blebox-commands';
 
+type SwitchOp = 'on' | 'off' | 'toggle';
+
 interface WizardValues {
   name: string;
   triggerType: number;
@@ -32,12 +35,26 @@ interface WizardValues {
   intervalS: number;
   throttleS: number;
   kind: ActionKind;
+  switchOp: SwitchOp;
   url: string;
   targetIp: string;
   commandId: string;
   relay: string;
   hex: string;
 }
+
+/** UI switch operation -> native device action type. */
+const SWITCH_ACTION_TYPE: Record<SwitchOp, number> = {
+  on: ACTION_TYPE.switchOn,
+  off: ACTION_TYPE.switchOff,
+  toggle: ACTION_TYPE.switchToggle,
+};
+
+const SWITCH_OP_BY_ACTION_TYPE: Record<number, SwitchOp> = {
+  [ACTION_TYPE.switchOn]: 'on',
+  [ACTION_TYPE.switchOff]: 'off',
+  [ACTION_TYPE.switchToggle]: 'toggle',
+};
 
 interface ActionWizardProps {
   deviceIp: string;
@@ -48,13 +65,21 @@ interface ActionWizardProps {
 }
 
 function initialValues(existing: Action | undefined): WizardValues {
+  const existingSwitchOp = existing ? SWITCH_OP_BY_ACTION_TYPE[existing.actionType] : undefined;
+  // New actions default to the simplest kind; edits open on the matching kind.
+  const kind: ActionKind = existingSwitchOp
+    ? 'switch-device'
+    : existing
+      ? 'invoke-url'
+      : 'switch-device';
   return {
     name: existing?.name ?? '',
     triggerType: existing?.triggerType ?? 0,
     triggerParam: existing?.triggerParam ?? 0,
     intervalS: existing?.intervalS ?? 0,
     throttleS: existing?.throttleS ?? 0,
-    kind: 'invoke-url',
+    kind,
+    switchOp: existingSwitchOp ?? 'on',
     url: existing?.param ?? '',
     targetIp: '',
     commandId: '',
@@ -87,18 +112,19 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
   const form = useForm({
     defaultValues: initialValues(existing),
     onSubmit: ({ value }) => {
-      const param = resolveParam(value, entries);
       const usesInterval = triggerUsesInterval(fieldsPreferences, value.triggerType);
+      const isSwitch = value.kind === 'switch-device';
       const action: Action = {
         id: actionId,
         name: value.name.trim(),
         input: inputId,
         triggerType: value.triggerType,
-        actionType: HTTP_GET_ACTION_TYPE,
+        actionType: isSwitch ? SWITCH_ACTION_TYPE[value.switchOp] : ACTION_TYPE.httpGet,
         triggerParam: value.triggerParam,
         intervalS: usesInterval ? value.intervalS : 0,
         throttleS: usesInterval ? value.throttleS : 0,
-        param,
+        // Native switch actions carry no param; HTTP GET carries the URL.
+        param: isSwitch ? '' : resolveParam(value, entries),
       };
       upsertAction(action);
       onClose();
@@ -129,7 +155,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
             step === 1
               ? values.triggerType !== 0
               : step === 2
-                ? isHttpUrl(param)
+                ? values.kind === 'switch-device' || isHttpUrl(param)
                 : true;
 
           return (
@@ -217,7 +243,23 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                     </Select>
                   </Field>
 
-                  {values.kind === 'invoke-url' ? (
+                  {values.kind === 'switch-device' ? (
+                    <Field label="Operation">
+                      <Select
+                        value={values.switchOp}
+                        onValueChange={(v) => form.setFieldValue('switchOp', v as SwitchOp)}
+                      >
+                        <SelectTrigger>
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="on">Switch ON</SelectItem>
+                          <SelectItem value="off">Switch OFF</SelectItem>
+                          <SelectItem value="toggle">Toggle</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </Field>
+                  ) : values.kind === 'invoke-url' ? (
                     <Field label="URL (HTTP GET)">
                       <Input
                         value={values.url}
@@ -296,13 +338,19 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                     </div>
                   )}
 
-                  {param ? (
-                    <p className="rounded-md bg-muted p-2 font-mono text-xs break-all">{param}</p>
-                  ) : null}
-                  {!isHttpUrl(param) ? (
-                    <p className="text-xs text-muted-foreground">
-                      A valid <code>http(s)://</code> URL is required to continue.
-                    </p>
+                  {values.kind !== 'switch-device' ? (
+                    <>
+                      {param ? (
+                        <p className="rounded-md bg-muted p-2 font-mono text-xs break-all">
+                          {param}
+                        </p>
+                      ) : null}
+                      {!isHttpUrl(param) ? (
+                        <p className="text-xs text-muted-foreground">
+                          A valid <code>http(s)://</code> URL is required to continue.
+                        </p>
+                      ) : null}
+                    </>
                   ) : null}
                 </div>
               ) : null}
@@ -313,7 +361,14 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                   <Summary label="Trigger" value={triggerTypeLabel(values.triggerType)} />
                   <Summary label="Name" value={values.name || '(none)'} />
                   <Summary label="Kind" value={ACTION_KIND_LABELS[values.kind]} />
-                  <Summary label="HTTP GET URL" value={param} mono />
+                  {values.kind === 'switch-device' ? (
+                    <Summary
+                      label="Operation"
+                      value={actionTypeLabel(SWITCH_ACTION_TYPE[values.switchOp])}
+                    />
+                  ) : (
+                    <Summary label="HTTP GET URL" value={param} mono />
+                  )}
                 </dl>
               ) : null}
 
