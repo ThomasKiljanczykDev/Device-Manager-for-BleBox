@@ -10,12 +10,17 @@ do not — `/api/settings/state` has an empty `switch` object. Actions are at
 `GET /api/actions/state` and saved via `POST /api/actions/set`. The device wins;
 the app targets the actions endpoints. See [`action-shape.md`](./action-shape.md).
 
-## `POST /api/actions/set` payload is inferred and unverified
+## `POST /api/actions/set` takes one round-tripped action
 
-Re-posting `{ actions: [...] }` returned HTTP 400; a follow-up single-slot probe
-was blocked by the environment's device-write guard. The app assumes a
-single-slot upsert `{ action: {...} }` (mirroring `/api/settings/set`). This is
-the one piece of behaviour not verified end-to-end against hardware.
+`/api/actions/set` is undocumented, but the payload was confirmed from the
+device's own wBox UI bundle (`settings.js`: `payload: { action: n }`). The
+endpoint takes **one action at a time**, `{ action: {...} }`.
+
+The action object must be **round-tripped**: the field set varies by
+device/firmware (some switchBox hardware adds `relay`/`forTime`/`ns`), so the
+app models the action as a loose object and saves the device's own object back
+with only edited fields changed. Reconstructing it with a fixed field set — or
+posting the whole `{ actions: [...] }` array — returns HTTP 400.
 
 ## Discovery: mDNS browse + active subnet sweep
 
