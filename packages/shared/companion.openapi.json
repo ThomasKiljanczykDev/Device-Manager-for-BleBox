@@ -172,8 +172,8 @@
                                 "type": "string"
                               },
                               "availableFv": {
-                                "type": "string",
-                                "nullable": true
+                                "nullable": true,
+                                "type": "string"
                               }
                             },
                             "required": [
@@ -227,8 +227,7 @@
                 },
                 "required": [
                   "ip"
-                ],
-                "additionalProperties": false
+                ]
               }
             }
           }
@@ -285,8 +284,8 @@
                           "type": "string"
                         },
                         "availableFv": {
-                          "type": "string",
-                          "nullable": true
+                          "nullable": true,
+                          "type": "string"
                         }
                       },
                       "required": [

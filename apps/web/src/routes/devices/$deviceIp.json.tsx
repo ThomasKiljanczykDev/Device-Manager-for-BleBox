@@ -47,7 +47,7 @@ function JsonEditorDialog() {
     });
   };
 
-  const apply = () => {
+  const apply = async () => {
     let parsed: unknown;
     try {
       parsed = JSON.parse(text);
@@ -61,7 +61,7 @@ function JsonEditorDialog() {
       return;
     }
     replaceAll(result.data.actions);
-    close();
+    await close();
   };
 
   return (

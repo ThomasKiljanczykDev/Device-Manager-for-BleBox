@@ -49,7 +49,7 @@ export const numericRangeSchema = z.object({
   minValue: z.number(),
   maxValue: z.number(),
   multiplier: z.number().optional(),
-  specialValues: z.record(z.number()).optional(),
+  specialValues: z.record(z.string(), z.number()).optional(),
 });
 
 export type NumericRange = z.infer<typeof numericRangeSchema>;
@@ -60,7 +60,7 @@ export type NumericRange = z.infer<typeof numericRangeSchema>;
  * interpreted by the helper functions below.
  */
 export const fieldPreferenceSchema = z
-  .object({
+  .looseObject({
     name: z.string(),
     values: z.array(z.number()).optional(),
     placeholders: z.array(z.string()).optional(),
@@ -68,9 +68,8 @@ export const fieldPreferenceSchema = z
     dependsOnValues: z.array(z.number()).optional(),
     minValue: z.number().optional(),
     maxValue: z.number().optional(),
-    constraints: z.array(z.record(z.unknown())).optional(),
-  })
-  .passthrough();
+    constraints: z.array(z.record(z.string(), z.unknown())).optional(),
+  });
 
 export type FieldPreference = z.infer<typeof fieldPreferenceSchema>;
 

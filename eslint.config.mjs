@@ -50,6 +50,14 @@ export default tseslint.config(
     },
   },
   {
+    // TanStack Router route files must export `Route` — the HMR-only rule
+    // does not apply to them.
+    files: ['apps/web/src/routes/**/*.tsx'],
+    rules: {
+      'react-refresh/only-export-components': 'off',
+    },
+  },
+  {
     files: ['apps/companion/**/*.ts', 'packages/**/*.ts', 'scripts/**/*.mjs'],
     languageOptions: {
       globals: { ...globals.node },

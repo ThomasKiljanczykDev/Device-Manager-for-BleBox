@@ -1,4 +1,4 @@
-import { zodToJsonSchema } from 'zod-to-json-schema';
+import { z } from 'zod';
 import { actionsDocumentSchema } from './schemas/actions';
 import { TRIGGER_TYPE_UNCONFIGURED, triggerTypeLabel } from './constants';
 
@@ -29,9 +29,9 @@ export interface ActionsSchemaOptions {
  * values so Monaco can offer labelled autocompletion and inline validation.
  */
 export function buildActionsJsonSchema(options: ActionsSchemaOptions = {}): JsonSchemaNode {
-  const root = zodToJsonSchema(actionsDocumentSchema, {
-    $refStrategy: 'none',
-    target: 'jsonSchema7',
+  const root = z.toJSONSchema(actionsDocumentSchema, {
+    target: 'draft-7',
+    reused: 'inline',
   }) as JsonSchemaNode;
 
   const itemProps = root.properties?.actions?.items?.properties;
