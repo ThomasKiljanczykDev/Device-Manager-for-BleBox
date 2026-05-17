@@ -4,7 +4,7 @@ import { Loader2, Plus, Radar, Square } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
-import { useDeviceList, useScanControls } from '@/features/devices/queries';
+import { useDeviceList, useDiscoverySync, useScanControls } from '@/features/devices/queries';
 
 export const Route = createFileRoute('/devices')({
   component: DevicesLayout,
@@ -12,6 +12,7 @@ export const Route = createFileRoute('/devices')({
 
 function DevicesLayout() {
   const { t } = useTranslation();
+  useDiscoverySync();
   const { entries, scanning } = useDeviceList();
   const { start, stop } = useScanControls();
 
@@ -60,9 +61,9 @@ function DevicesLayout() {
                       <span
                         className={cn(
                           'size-2 shrink-0 rounded-full',
-                          entry.discovered ? 'bg-emerald-500' : 'bg-muted-foreground/40',
+                          entry.online ? 'bg-emerald-500' : 'bg-muted-foreground/40',
                         )}
-                        title={entry.discovered ? t('sidebar.online') : t('sidebar.offlineHint')}
+                        title={entry.online ? t('sidebar.online') : t('sidebar.offlineHint')}
                       />
                       <span className="truncate font-medium">{entry.device.deviceName}</span>
                     </div>
