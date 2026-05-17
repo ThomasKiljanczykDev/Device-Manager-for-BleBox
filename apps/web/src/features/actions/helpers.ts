@@ -1,9 +1,6 @@
-import {
-  ACTION_TYPE,
-  actionTypeLabel,
-  TRIGGER_TYPE_UNCONFIGURED,
-  type Action,
-} from '@blebox/shared';
+import type { TFunction } from 'i18next';
+import { ACTION_TYPE, TRIGGER_TYPE_UNCONFIGURED, type Action } from '@blebox/shared';
+import { actionTypeLabel } from '@/i18n/labels';
 
 /** A slot is "configured" once it has a non-zero trigger type. */
 export function isConfigured(action: Action): boolean {
@@ -26,9 +23,9 @@ export function inputsInUse(actions: Action[]): number[] {
 }
 
 /** Short human summary of an action's effect. */
-export function actionSummary(action: Action): string {
+export function actionSummary(action: Action, t: TFunction): string {
   if (action.actionType === ACTION_TYPE.httpGet) {
-    return action.param ? `${actionTypeLabel(action.actionType)} ${action.param}` : '—';
+    return action.param ? `${actionTypeLabel(t, action.actionType)} ${action.param}` : '—';
   }
-  return actionTypeLabel(action.actionType);
+  return actionTypeLabel(t, action.actionType);
 }

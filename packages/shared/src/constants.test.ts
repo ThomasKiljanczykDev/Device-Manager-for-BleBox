@@ -1,13 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import {
-  ACTION_KIND_LABELS,
-  ACTION_TYPE,
-  ACTION_TYPE_LABELS,
-  actionTypeLabel,
-  isSupportedDeviceType,
-  triggerTypeLabel,
-  TRIGGER_TYPE_LABELS,
-} from './constants';
+import { ACTION_KINDS, ACTION_TYPE, isSupportedDeviceType } from './constants';
 
 describe('device type support', () => {
   it('recognises supported switch / light families', () => {
@@ -24,34 +16,7 @@ describe('device type support', () => {
   });
 });
 
-describe('trigger type labels', () => {
-  it('maps documented trigger types 1-5', () => {
-    expect(TRIGGER_TYPE_LABELS[1]).toBe('Short click');
-    expect(TRIGGER_TYPE_LABELS[2]).toBe('Long click');
-    expect(TRIGGER_TYPE_LABELS[3]).toBe('Falling edge');
-    expect(TRIGGER_TYPE_LABELS[4]).toBe('Rising edge');
-    expect(TRIGGER_TYPE_LABELS[5]).toBe('Any edge');
-  });
-
-  it('labels the unconfigured slot and observed device triggers', () => {
-    expect(TRIGGER_TYPE_LABELS[0]).toBe('Unconfigured');
-    expect(TRIGGER_TYPE_LABELS[42]).toMatch(/threshold/i);
-  });
-
-  it('falls back to a numeric label for unknown trigger types', () => {
-    expect(triggerTypeLabel(123)).toBe('Trigger 123');
-  });
-});
-
-describe('action kinds', () => {
-  it('exposes labels for all UI action kinds', () => {
-    expect(ACTION_KIND_LABELS['switch-device']).toBe('Switch this device');
-    expect(ACTION_KIND_LABELS['blebox-device']).toBe('BleBox device action');
-    expect(ACTION_KIND_LABELS['invoke-url']).toBe('Invoke URL (GET)');
-  });
-});
-
-describe('action types', () => {
+describe('action enums', () => {
   it('maps the action-type enum to its values', () => {
     expect(ACTION_TYPE.unconfigured).toBe(0);
     expect(ACTION_TYPE.switchOn).toBe(1);
@@ -60,15 +25,9 @@ describe('action types', () => {
     expect(ACTION_TYPE.httpGet).toBe(50);
   });
 
-  it('labels native switch and HTTP GET action types', () => {
-    expect(ACTION_TYPE_LABELS[0]).toBe('Unconfigured');
-    expect(actionTypeLabel(ACTION_TYPE.switchOn)).toBe('Switch ON');
-    expect(actionTypeLabel(ACTION_TYPE.switchOff)).toBe('Switch OFF');
-    expect(actionTypeLabel(ACTION_TYPE.switchToggle)).toBe('Toggle');
-    expect(actionTypeLabel(ACTION_TYPE.httpGet)).toBe('HTTP GET');
-  });
-
-  it('falls back to a numeric label for unknown action types', () => {
-    expect(actionTypeLabel(99)).toBe('Action 99');
+  it('exposes the wizard action kinds', () => {
+    expect(ACTION_KINDS).toContain('switch-device');
+    expect(ACTION_KINDS).toContain('blebox-device');
+    expect(ACTION_KINDS).toContain('invoke-url');
   });
 });

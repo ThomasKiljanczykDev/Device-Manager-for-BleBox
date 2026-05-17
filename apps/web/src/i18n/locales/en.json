@@ -1,0 +1,150 @@
+{
+  "common": {
+    "save": "Save",
+    "cancel": "Cancel",
+    "back": "Back",
+    "next": "Next",
+    "retry": "Retry",
+    "discard": "Discard",
+    "addManually": "Add manually"
+  },
+  "sidebar": {
+    "title": "BleBox Device Manager",
+    "subtitle": "Action configuration",
+    "startScan": "Start scan",
+    "stopScan": "Stop scan",
+    "scanning": "Scanning the local network…",
+    "empty": "No devices yet.",
+    "online": "Online",
+    "offlineHint": "Not seen in last scan"
+  },
+  "devicesIndex": {
+    "selectTitle": "Select a device",
+    "selectBody": "Pick a device from the sidebar to view and edit its action configuration.",
+    "emptyTitle": "No devices yet",
+    "emptyBody": "Scan the local network for BleBox switches, or add one manually by IP."
+  },
+  "deviceDetail": {
+    "editJson": "Edit raw JSON",
+    "online": "Online",
+    "offline": "Offline",
+    "unknownType": "unknown",
+    "apiLevel": "API {{level}}",
+    "saveError": "Failed to save actions to the device.",
+    "loading": "Loading actions from {{ip}}…",
+    "loadError": "Could not load actions from this device.",
+    "inputs_one": "{{count}} input",
+    "inputs_other": "{{count}} inputs",
+    "relays_one": "{{count}} relay",
+    "relays_other": "{{count}} relays",
+    "slots_one": "{{count}} action slot",
+    "slots_other": "{{count}} action slots"
+  },
+  "manualAdd": {
+    "title": "Add a device manually",
+    "description": "Enter the LAN IP address of a BleBox device.",
+    "ipLabel": "IP address",
+    "ipPlaceholder": "192.168.1.50",
+    "submit": "Probe & add",
+    "companionError": "Could not reach the companion service."
+  },
+  "jsonEditor": {
+    "title": "Edit actions JSON",
+    "description": "Schema-validated editor for the full actions array. Applying updates the in-memory draft; use Save on the device page to persist.",
+    "apply": "Apply changes",
+    "invalidJson": "Invalid JSON: {{message}}",
+    "schemaError": "Does not match the action schema: {{message}}",
+    "schemaErrorFallback": "invalid",
+    "parseError": "parse error"
+  },
+  "actionsPanel": {
+    "inputTitle": "Input {{n}}",
+    "addAction": "Add action",
+    "slotsFull": "All 30 action slots are in use",
+    "noActions": "No actions configured.",
+    "colTrigger": "Trigger",
+    "colAction": "Action",
+    "colEdit": "Edit",
+    "deleteTitle": "Delete action"
+  },
+  "wizard": {
+    "newTitle": "New action · Input {{n}}",
+    "newDescription": "Define a trigger and the action it fires.",
+    "editTitle": "Edit action · Input {{n}}",
+    "editDescription": "Update the trigger or the action.",
+    "noFreeSlots": "All action slots on this device are in use. Delete an action first.",
+    "actionGone": "That action no longer exists.",
+    "step": "Step {{step}} of 3",
+    "triggerTypeLabel": "Trigger type",
+    "triggerPlaceholder": "Select a trigger",
+    "triggerParam": "Trigger parameter ({{min}}–{{max}})",
+    "intervalS": "Interval (s)",
+    "throttleS": "Throttle (s)",
+    "nameLabel": "Action name (optional)",
+    "namePlaceholder": "e.g. Kitchen light ON",
+    "kindLabel": "Action kind",
+    "operationLabel": "Operation",
+    "urlLabel": "URL (HTTP GET)",
+    "urlPlaceholder": "http://192.168.1.50/s/1",
+    "targetLabel": "Target device",
+    "targetPlaceholder": "Pick a known device",
+    "commandLabel": "Command",
+    "commandPlaceholder": "Pick a command",
+    "urlRequired": "A valid http(s):// URL is required to continue.",
+    "addAction": "Add action",
+    "saveAction": "Save action",
+    "summaryInput": "Input",
+    "summaryTrigger": "Trigger",
+    "summaryName": "Name",
+    "summaryKind": "Kind",
+    "summaryOperation": "Operation",
+    "summaryUrl": "HTTP GET URL",
+    "summaryNoName": "(none)"
+  },
+  "triggerType": {
+    "0": "Unconfigured",
+    "1": "Short click",
+    "2": "Long click",
+    "3": "Falling edge",
+    "4": "Rising edge",
+    "5": "Any edge",
+    "19": "Device event",
+    "42": "Power above threshold",
+    "43": "Power below threshold",
+    "fallback": "Trigger {{value}}"
+  },
+  "actionType": {
+    "0": "Unconfigured",
+    "1": "Switch ON",
+    "2": "Switch OFF",
+    "3": "Toggle",
+    "50": "HTTP GET",
+    "fallback": "Action {{value}}"
+  },
+  "actionKind": {
+    "switch-device": "Switch this device",
+    "blebox-device": "BleBox device action",
+    "invoke-url": "Invoke URL (GET)"
+  },
+  "command": {
+    "switchBox": {
+      "on": "Turn relay ON",
+      "off": "Turn relay OFF",
+      "toggle": "Toggle relay"
+    },
+    "switchBoxD": {
+      "on": "Turn relay ON",
+      "off": "Turn relay OFF",
+      "toggle": "Toggle relay"
+    },
+    "wLightBox": {
+      "color": "Set color",
+      "on": "Turn on (last color)",
+      "toggle": "Toggle on/off"
+    }
+  },
+  "commandParam": {
+    "relay": "Relay index",
+    "hex": "Color (hex, e.g. FFFFFFFF)"
+  }
+}

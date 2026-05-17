@@ -1,9 +1,10 @@
 import { Link } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
-import { triggerTypeLabel } from '@blebox/shared';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { triggerTypeLabel } from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 import { actionSummary, configuredActions, firstEmptySlotId } from './helpers';
 
@@ -14,6 +15,7 @@ interface ActionsPanelProps {
 
 /** Per-input action tables, sourced from the in-memory draft. */
 export function ActionsPanel({ deviceIp, inputCount }: ActionsPanelProps) {
+  const { t } = useTranslation();
   const working = useActionsDraftStore((s) => s.working);
   const deleteAction = useActionsDraftStore((s) => s.deleteAction);
 
@@ -28,10 +30,12 @@ export function ActionsPanel({ deviceIp, inputCount }: ActionsPanelProps) {
         return (
           <Card key={input}>
             <CardHeader className="flex-row items-center justify-between">
-              <CardTitle className="text-sm">Input {input + 1}</CardTitle>
+              <CardTitle className="text-sm">
+                {t('actionsPanel.inputTitle', { n: input + 1 })}
+              </CardTitle>
               {slotsFull ? (
-                <Button size="sm" variant="outline" disabled title="All 30 action slots are in use">
-                  <Plus /> Add action
+                <Button size="sm" variant="outline" disabled title={t('actionsPanel.slotsFull')}>
+                  <Plus /> {t('actionsPanel.addAction')}
                 </Button>
               ) : (
                 <Button asChild size="sm" variant="outline">
@@ -39,34 +43,36 @@ export function ActionsPanel({ deviceIp, inputCount }: ActionsPanelProps) {
                     to="/devices/$deviceIp/actions/$inputId/new"
                     params={{ deviceIp, inputId: String(input) }}
                   >
-                    <Plus /> Add action
+                    <Plus /> {t('actionsPanel.addAction')}
                   </Link>
                 </Button>
               )}
             </CardHeader>
             <CardContent>
               {rows.length === 0 ? (
-                <p className="text-xs text-muted-foreground">No actions configured.</p>
+                <p className="text-xs text-muted-foreground">{t('actionsPanel.noActions')}</p>
               ) : (
                 <Table>
                   <TableHeader>
                     <TableRow>
-                      <TableHead className="w-40">Trigger</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead className="w-24 text-right">Edit</TableHead>
+                      <TableHead className="w-40">{t('actionsPanel.colTrigger')}</TableHead>
+                      <TableHead>{t('actionsPanel.colAction')}</TableHead>
+                      <TableHead className="w-24 text-right">{t('actionsPanel.colEdit')}</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
                     {rows.map((action) => (
                       <TableRow key={action.id}>
                         <TableCell>
-                          <div className="font-medium">{triggerTypeLabel(action.triggerType)}</div>
+                          <div className="font-medium">
+                            {triggerTypeLabel(t, action.triggerType)}
+                          </div>
                           {action.name ? (
                             <div className="text-xs text-muted-foreground">{action.name}</div>
                           ) : null}
                         </TableCell>
                         <TableCell className="font-mono text-xs break-all">
-                          {actionSummary(action)}
+                          {actionSummary(action, t)}
                         </TableCell>
                         <TableCell>
                           <div className="flex justify-end gap-1">
@@ -86,7 +92,7 @@ export function ActionsPanel({ deviceIp, inputCount }: ActionsPanelProps) {
                               size="icon"
                               variant="ghost"
                               onClick={() => deleteAction(action.id)}
-                              title="Delete action"
+                              title={t('actionsPanel.deleteTitle')}
                             >
                               <Trash2 />
                             </Button>

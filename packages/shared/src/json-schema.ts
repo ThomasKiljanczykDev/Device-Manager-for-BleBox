@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { actionsDocumentSchema } from './schemas/actions';
-import { actionTypeLabel, TRIGGER_TYPE_UNCONFIGURED, triggerTypeLabel } from './constants';
+import { TRIGGER_TYPE_UNCONFIGURED } from './constants';
 
 /** Minimal JSON Schema node shape — enough to enrich generated schemas. */
 export interface JsonSchemaNode {
@@ -19,6 +19,10 @@ export interface ActionsSchemaOptions {
   triggerTypes?: number[];
   /** Action-type values the target device accepts (from `fieldsPreferences`). */
   actionTypes?: number[];
+  /** Localised labels per trigger-type value, for Monaco `enumDescriptions`. */
+  triggerTypeLabels?: Record<number, string>;
+  /** Localised labels per action-type value, for Monaco `enumDescriptions`. */
+  actionTypeLabels?: Record<number, string>;
   /** `param` template placeholders the device supports. */
   placeholders?: string[];
 }
@@ -39,17 +43,22 @@ export function buildActionsJsonSchema(options: ActionsSchemaOptions = {}): Json
 
   const { triggerType, actionType, param } = itemProps;
 
+  const label = (labels: Record<number, string> | undefined, value: number) =>
+    labels?.[value] ? `${value} — ${labels[value]}` : String(value);
+
   if (triggerType && options.triggerTypes?.length) {
     // 0 (unconfigured) is always valid — empty action slots use it.
     const values = [...new Set([TRIGGER_TYPE_UNCONFIGURED, ...options.triggerTypes])];
     triggerType.enum = values;
-    triggerType.enumDescriptions = values.map((t) => `${t} — ${triggerTypeLabel(t)}`);
+    triggerType.enumDescriptions = values.map((v) => label(options.triggerTypeLabels, v));
     triggerType.description = 'Trigger type (device-specific; 0 = unconfigured)';
   }
 
   if (actionType && options.actionTypes?.length) {
     actionType.enum = options.actionTypes;
-    actionType.enumDescriptions = options.actionTypes.map((t) => `${t} — ${actionTypeLabel(t)}`);
+    actionType.enumDescriptions = options.actionTypes.map((v) =>
+      label(options.actionTypeLabels, v),
+    );
     actionType.description = 'Action type (0 = unconfigured, 50 = HTTP GET)';
   }
 

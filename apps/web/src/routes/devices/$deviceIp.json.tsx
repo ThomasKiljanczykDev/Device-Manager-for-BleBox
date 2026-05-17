@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import Editor, { type Monaco } from '@monaco-editor/react';
 import {
   ACTION_TYPE,
@@ -11,14 +12,20 @@ import {
 import '@/lib/monaco';
 import { RouteDialog } from '@/components/route-dialog';
 import { Button } from '@/components/ui/button';
+import { actionTypeLabel, triggerTypeLabel } from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 
 export const Route = createFileRoute('/devices/$deviceIp/json')({
   component: JsonEditorDialog,
 });
 
+function labelMap(values: number[], label: (value: number) => string): Record<number, string> {
+  return Object.fromEntries(values.map((value) => [value, label(value)]));
+}
+
 function JsonEditorDialog() {
   const { deviceIp } = Route.useParams();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const working = useActionsDraftStore((s) => s.working);
   const fieldsPreferences = useActionsDraftStore((s) => s.fieldsPreferences);
@@ -27,15 +34,17 @@ function JsonEditorDialog() {
   const [text, setText] = useState(() => JSON.stringify({ actions: working }, null, 2));
   const [error, setError] = useState<string | null>(null);
 
-  const schema = useMemo(
-    () =>
-      buildActionsJsonSchema({
-        triggerTypes: allowedTriggerTypes(fieldsPreferences, 999),
-        actionTypes: Object.values(ACTION_TYPE),
-        placeholders: paramPlaceholders(fieldsPreferences),
-      }),
-    [fieldsPreferences],
-  );
+  const schema = useMemo(() => {
+    const triggerTypes = allowedTriggerTypes(fieldsPreferences, 999);
+    const actionTypes = Object.values(ACTION_TYPE);
+    return buildActionsJsonSchema({
+      triggerTypes,
+      actionTypes,
+      triggerTypeLabels: labelMap([0, ...triggerTypes], (v) => triggerTypeLabel(t, v)),
+      actionTypeLabels: labelMap(actionTypes, (v) => actionTypeLabel(t, v)),
+      placeholders: paramPlaceholders(fieldsPreferences),
+    });
+  }, [fieldsPreferences, t]);
 
   const close = () => navigate({ to: '/devices/$deviceIp', params: { deviceIp } });
 
@@ -52,12 +61,20 @@ function JsonEditorDialog() {
     try {
       parsed = JSON.parse(text);
     } catch (err) {
-      setError(`Invalid JSON: ${err instanceof Error ? err.message : 'parse error'}`);
+      setError(
+        t('jsonEditor.invalidJson', {
+          message: err instanceof Error ? err.message : t('jsonEditor.parseError'),
+        }),
+      );
       return;
     }
     const result = actionsDocumentSchema.safeParse(parsed);
     if (!result.success) {
-      setError(`Does not match the action schema: ${result.error.issues[0]?.message ?? 'invalid'}`);
+      setError(
+        t('jsonEditor.schemaError', {
+          message: result.error.issues[0]?.message ?? t('jsonEditor.schemaErrorFallback'),
+        }),
+      );
       return;
     }
     replaceAll(result.data.actions);
@@ -66,8 +83,8 @@ function JsonEditorDialog() {
 
   return (
     <RouteDialog
-      title="Edit actions JSON"
-      description="Schema-validated editor for the full actions array. Applying updates the in-memory draft; use Save on the device page to persist."
+      title={t('jsonEditor.title')}
+      description={t('jsonEditor.description')}
       onClose={close}
       className="max-w-3xl"
     >
@@ -95,9 +112,9 @@ function JsonEditorDialog() {
 
       <div className="flex justify-end gap-2">
         <Button variant="outline" onClick={close}>
-          Cancel
+          {t('common.cancel')}
         </Button>
-        <Button onClick={apply}>Apply changes</Button>
+        <Button onClick={apply}>{t('jsonEditor.apply')}</Button>
       </div>
     </RouteDialog>
   );

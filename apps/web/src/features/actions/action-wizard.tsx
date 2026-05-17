@@ -1,13 +1,11 @@
 import { useMemo, useState } from 'react';
 import { useForm } from '@tanstack/react-form';
+import { useTranslation } from 'react-i18next';
 import {
-  ACTION_KIND_LABELS,
   ACTION_KINDS,
   ACTION_TYPE,
-  actionTypeLabel,
   allowedTriggerTypes,
   triggerParamRange,
-  triggerTypeLabel,
   triggerUsesInterval,
   type Action,
   type ActionKind,
@@ -22,6 +20,13 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import {
+  actionKindLabel,
+  actionTypeLabel,
+  commandLabel,
+  commandParamLabel,
+  triggerTypeLabel,
+} from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 import { useDeviceList } from '@/features/devices/queries';
 import { commandsFor, CONTROLLABLE_TYPES } from './blebox-commands';
@@ -90,11 +95,9 @@ function initialValues(existing: Action | undefined): WizardValues {
 
 const isHttpUrl = (value: string) => /^https?:\/\/.+/i.test(value.trim());
 
-/**
- * Three-step wizard for creating/editing an action. Both action kinds persist
- * as `actionType: 50` (HTTP GET); they differ only in how `param` is built.
- */
+/** Three-step wizard for creating/editing an action on an input. */
 export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }: ActionWizardProps) {
+  const { t } = useTranslation();
   const fieldsPreferences = useActionsDraftStore((s) => s.fieldsPreferences);
   const upsertAction = useActionsDraftStore((s) => s.upsertAction);
   const { entries } = useDeviceList();
@@ -139,16 +142,16 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
         void form.handleSubmit();
       }}
     >
-      <p className="text-xs font-medium text-muted-foreground">Step {step} of 3</p>
+      <p className="text-xs font-medium text-muted-foreground">{t('wizard.step', { step })}</p>
 
       <form.Subscribe selector={(state) => state.values}>
         {(values) => {
           const range = triggerParamRange(fieldsPreferences, values.triggerType);
           const usesInterval = triggerUsesInterval(fieldsPreferences, values.triggerType);
           const param = resolveParam(values, entries);
-          const commands = commandsFor(
-            entries.find((e) => e.ip === values.targetIp)?.device.type ?? '',
-          );
+          const targetType =
+            entries.find((e) => e.ip === values.targetIp)?.device.type ?? '';
+          const commands = commandsFor(targetType);
           const activeCommand = commands.find((c) => c.id === values.commandId);
 
           const canAdvance =
@@ -162,18 +165,18 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
             <>
               {step === 1 ? (
                 <div className="flex flex-col gap-3">
-                  <Field label="Trigger type">
+                  <Field label={t('wizard.triggerTypeLabel')}>
                     <Select
                       value={values.triggerType ? String(values.triggerType) : ''}
                       onValueChange={(v) => form.setFieldValue('triggerType', Number(v))}
                     >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a trigger" />
+                        <SelectValue placeholder={t('wizard.triggerPlaceholder')} />
                       </SelectTrigger>
                       <SelectContent>
-                        {triggerTypes.map((t) => (
-                          <SelectItem key={t} value={String(t)}>
-                            {triggerTypeLabel(t)} ({t})
+                        {triggerTypes.map((tt) => (
+                          <SelectItem key={tt} value={String(tt)}>
+                            {triggerTypeLabel(t, tt)} ({tt})
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -181,7 +184,12 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                   </Field>
 
                   {range ? (
-                    <Field label={`Trigger parameter (${range.minValue}–${range.maxValue})`}>
+                    <Field
+                      label={t('wizard.triggerParam', {
+                        min: range.minValue,
+                        max: range.maxValue,
+                      })}
+                    >
                       <Input
                         type="number"
                         min={range.minValue}
@@ -194,7 +202,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
 
                   {usesInterval ? (
                     <div className="grid grid-cols-2 gap-3">
-                      <Field label="Interval (s)">
+                      <Field label={t('wizard.intervalS')}>
                         <Input
                           type="number"
                           min={0}
@@ -202,7 +210,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                           onChange={(e) => form.setFieldValue('intervalS', Number(e.target.value))}
                         />
                       </Field>
-                      <Field label="Throttle (s)">
+                      <Field label={t('wizard.throttleS')}>
                         <Input
                           type="number"
                           min={0}
@@ -213,10 +221,10 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                     </div>
                   ) : null}
 
-                  <Field label="Action name (optional)">
+                  <Field label={t('wizard.nameLabel')}>
                     <Input
                       value={values.name}
-                      placeholder="e.g. Kitchen light ON"
+                      placeholder={t('wizard.namePlaceholder')}
                       onChange={(e) => form.setFieldValue('name', e.target.value)}
                     />
                   </Field>
@@ -225,7 +233,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
 
               {step === 2 ? (
                 <div className="flex flex-col gap-3">
-                  <Field label="Action kind">
+                  <Field label={t('wizard.kindLabel')}>
                     <Select
                       value={values.kind}
                       onValueChange={(v) => form.setFieldValue('kind', v as ActionKind)}
@@ -236,7 +244,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                       <SelectContent>
                         {ACTION_KINDS.map((kind) => (
                           <SelectItem key={kind} value={kind}>
-                            {ACTION_KIND_LABELS[kind]}
+                            {actionKindLabel(t, kind)}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -244,7 +252,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                   </Field>
 
                   {values.kind === 'switch-device' ? (
-                    <Field label="Operation">
+                    <Field label={t('wizard.operationLabel')}>
                       <Select
                         value={values.switchOp}
                         onValueChange={(v) => form.setFieldValue('switchOp', v as SwitchOp)}
@@ -253,23 +261,27 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="on">Switch ON</SelectItem>
-                          <SelectItem value="off">Switch OFF</SelectItem>
-                          <SelectItem value="toggle">Toggle</SelectItem>
+                          <SelectItem value="on">{actionTypeLabel(t, ACTION_TYPE.switchOn)}</SelectItem>
+                          <SelectItem value="off">
+                            {actionTypeLabel(t, ACTION_TYPE.switchOff)}
+                          </SelectItem>
+                          <SelectItem value="toggle">
+                            {actionTypeLabel(t, ACTION_TYPE.switchToggle)}
+                          </SelectItem>
                         </SelectContent>
                       </Select>
                     </Field>
                   ) : values.kind === 'invoke-url' ? (
-                    <Field label="URL (HTTP GET)">
+                    <Field label={t('wizard.urlLabel')}>
                       <Input
                         value={values.url}
-                        placeholder="http://192.168.1.50/s/1"
+                        placeholder={t('wizard.urlPlaceholder')}
                         onChange={(e) => form.setFieldValue('url', e.target.value)}
                       />
                     </Field>
                   ) : (
                     <div className="flex flex-col gap-3">
-                      <Field label="Target device">
+                      <Field label={t('wizard.targetLabel')}>
                         <Select
                           value={values.targetIp}
                           onValueChange={(v) => {
@@ -278,7 +290,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                           }}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Pick a known device" />
+                            <SelectValue placeholder={t('wizard.targetPlaceholder')} />
                           </SelectTrigger>
                           <SelectContent>
                             {targetDevices.map((d) => (
@@ -291,18 +303,18 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                       </Field>
 
                       {values.targetIp ? (
-                        <Field label="Command">
+                        <Field label={t('wizard.commandLabel')}>
                           <Select
                             value={values.commandId}
                             onValueChange={(v) => form.setFieldValue('commandId', v)}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Pick a command" />
+                              <SelectValue placeholder={t('wizard.commandPlaceholder')} />
                             </SelectTrigger>
                             <SelectContent>
                               {commands.map((c) => (
                                 <SelectItem key={c.id} value={c.id}>
-                                  {c.label}
+                                  {commandLabel(t, targetType, c.id)}
                                 </SelectItem>
                               ))}
                             </SelectContent>
@@ -312,7 +324,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
 
                       {activeCommand?.params.map((p) =>
                         p.name === 'relay' ? (
-                          <Field key={p.name} label={p.label}>
+                          <Field key={p.name} label={commandParamLabel(t, p.name)}>
                             <Select
                               value={values.relay}
                               onValueChange={(v) => form.setFieldValue('relay', v)}
@@ -327,7 +339,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                             </Select>
                           </Field>
                         ) : (
-                          <Field key={p.name} label={p.label}>
+                          <Field key={p.name} label={commandParamLabel(t, p.name)}>
                             <Input
                               value={values.hex}
                               onChange={(e) => form.setFieldValue('hex', e.target.value)}
@@ -347,7 +359,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                       ) : null}
                       {!isHttpUrl(param) ? (
                         <p className="text-xs text-muted-foreground">
-                          A valid <code>http(s)://</code> URL is required to continue.
+                          {t('wizard.urlRequired')}
                         </p>
                       ) : null}
                     </>
@@ -357,17 +369,23 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
 
               {step === 3 ? (
                 <dl className="flex flex-col gap-2 text-sm">
-                  <Summary label="Input" value={`Input ${inputId + 1}`} />
-                  <Summary label="Trigger" value={triggerTypeLabel(values.triggerType)} />
-                  <Summary label="Name" value={values.name || '(none)'} />
-                  <Summary label="Kind" value={ACTION_KIND_LABELS[values.kind]} />
+                  <Summary label={t('wizard.summaryInput')} value={String(inputId + 1)} />
+                  <Summary
+                    label={t('wizard.summaryTrigger')}
+                    value={triggerTypeLabel(t, values.triggerType)}
+                  />
+                  <Summary
+                    label={t('wizard.summaryName')}
+                    value={values.name || t('wizard.summaryNoName')}
+                  />
+                  <Summary label={t('wizard.summaryKind')} value={actionKindLabel(t, values.kind)} />
                   {values.kind === 'switch-device' ? (
                     <Summary
-                      label="Operation"
-                      value={actionTypeLabel(SWITCH_ACTION_TYPE[values.switchOp])}
+                      label={t('wizard.summaryOperation')}
+                      value={actionTypeLabel(t, SWITCH_ACTION_TYPE[values.switchOp])}
                     />
                   ) : (
-                    <Summary label="HTTP GET URL" value={param} mono />
+                    <Summary label={t('wizard.summaryUrl')} value={param} mono />
                   )}
                 </dl>
               ) : null}
@@ -378,14 +396,16 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                   variant="ghost"
                   onClick={() => (step === 1 ? onClose() : setStep(step - 1))}
                 >
-                  {step === 1 ? 'Cancel' : 'Back'}
+                  {step === 1 ? t('common.cancel') : t('common.back')}
                 </Button>
                 {step < 3 ? (
                   <Button type="button" disabled={!canAdvance} onClick={() => setStep(step + 1)}>
-                    Next
+                    {t('common.next')}
                   </Button>
                 ) : (
-                  <Button type="submit">{existing ? 'Save action' : 'Add action'}</Button>
+                  <Button type="submit">
+                    {existing ? t('wizard.saveAction') : t('wizard.addAction')}
+                  </Button>
                 )}
               </div>
             </>

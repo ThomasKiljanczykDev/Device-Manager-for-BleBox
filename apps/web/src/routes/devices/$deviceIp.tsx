@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
 import { AlertCircle, Braces, Loader2, RotateCcw, Save } from 'lucide-react';
 import { deriveInputCount } from '@blebox/shared';
 import { Badge } from '@/components/ui/badge';
@@ -17,6 +18,7 @@ export const Route = createFileRoute('/devices/$deviceIp')({
 
 function DeviceDetail() {
   const { deviceIp } = Route.useParams();
+  const { t } = useTranslation();
   const queryClient = useQueryClient();
 
   const info = useQuery({
@@ -34,6 +36,7 @@ function DeviceDetail() {
 
   const working = useActionsDraftStore((s) => s.working);
   const snapshot = useActionsDraftStore((s) => s.snapshot);
+  const itemsLimit = useActionsDraftStore((s) => s.itemsLimit);
   const dirty = isActionsDraftDirty({ working, snapshot });
 
   // Sync the draft from the device whenever fresh data arrives and the user
@@ -74,24 +77,24 @@ function DeviceDetail() {
     <div className="flex min-h-full flex-col">
       <header className="flex flex-wrap items-center gap-3 border-b p-6">
         <div className="mr-auto">
-          <h2 className="text-lg font-semibold">
-            {info.data?.deviceName ?? deviceIp}
-          </h2>
+          <h2 className="text-lg font-semibold">{info.data?.deviceName ?? deviceIp}</h2>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <Badge variant="secondary">{info.data?.type ?? 'unknown'}</Badge>
-            {info.data?.apiLevel ? <Badge variant="outline">API {info.data.apiLevel}</Badge> : null}
+            <Badge variant="secondary">{info.data?.type ?? t('deviceDetail.unknownType')}</Badge>
+            {info.data?.apiLevel ? (
+              <Badge variant="outline">{t('deviceDetail.apiLevel', { level: info.data.apiLevel })}</Badge>
+            ) : null}
             <span>{deviceIp}</span>
             <span className="flex items-center gap-1">
               <span
                 className={`size-2 rounded-full ${online ? 'bg-emerald-500' : 'bg-destructive'}`}
               />
-              {online ? 'Online' : 'Offline'}
+              {online ? t('deviceDetail.online') : t('deviceDetail.offline')}
             </span>
           </div>
         </div>
         <Button asChild variant="outline" size="sm">
           <Link to="/devices/$deviceIp/json" params={{ deviceIp }}>
-            <Braces /> Edit raw JSON
+            <Braces /> {t('deviceDetail.editJson')}
           </Link>
         </Button>
         {dirty ? (
@@ -100,42 +103,42 @@ function DeviceDetail() {
             size="sm"
             onClick={() => useActionsDraftStore.getState().revert()}
           >
-            <RotateCcw /> Discard
+            <RotateCcw /> {t('common.discard')}
           </Button>
         ) : null}
         <Button size="sm" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
-          {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} Save
+          {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} {t('common.save')}
         </Button>
       </header>
 
       {save.isError ? (
         <p className="flex items-center gap-2 border-b bg-destructive/10 px-6 py-2 text-sm text-destructive">
-          <AlertCircle className="size-4" /> Failed to save actions to the device.
+          <AlertCircle className="size-4" /> {t('deviceDetail.saveError')}
         </p>
       ) : null}
 
       <div className="p-6">
         {actions.isPending ? (
           <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" /> Loading actions from {deviceIp}…
+            <Loader2 className="size-4 animate-spin" /> {t('deviceDetail.loading', { ip: deviceIp })}
           </p>
         ) : actions.isError ? (
           <div className="flex flex-col items-start gap-2">
             <p className="flex items-center gap-2 text-sm text-destructive">
-              <AlertCircle className="size-4" /> Could not load actions from this device.
+              <AlertCircle className="size-4" /> {t('deviceDetail.loadError')}
             </p>
             <Button variant="outline" size="sm" onClick={() => actions.refetch()}>
-              Retry
+              {t('common.retry')}
             </Button>
           </div>
         ) : (
           <>
             <div className="mb-4 flex gap-4 text-xs text-muted-foreground">
-              <span>{inputCount} input(s)</span>
+              <span>{t('deviceDetail.inputs', { count: inputCount })}</span>
               <Separator orientation="vertical" className="h-4" />
-              <span>{relayCount} relay(s)</span>
+              <span>{t('deviceDetail.relays', { count: relayCount })}</span>
               <Separator orientation="vertical" className="h-4" />
-              <span>{useActionsDraftStore.getState().itemsLimit} action slots</span>
+              <span>{t('deviceDetail.slots', { count: itemsLimit })}</span>
             </div>
             <ActionsPanel deviceIp={deviceIp} inputCount={inputCount} />
           </>

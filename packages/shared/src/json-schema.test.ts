@@ -9,10 +9,20 @@ describe('buildActionsJsonSchema', () => {
   });
 
   it('injects device-specific trigger-type enums and always allows 0', () => {
-    const schema = buildActionsJsonSchema({ triggerTypes: [1, 2, 42] });
+    const schema = buildActionsJsonSchema({
+      triggerTypes: [1, 2, 42],
+      triggerTypeLabels: { 0: 'Unconfigured', 1: 'Short click' },
+    });
     const triggerType = schema.properties?.actions?.items?.properties?.triggerType;
     expect(triggerType?.enum).toEqual([0, 1, 2, 42]);
-    expect(triggerType?.enumDescriptions?.[0]).toMatch(/Unconfigured/);
+    expect(triggerType?.enumDescriptions?.[0]).toBe('0 — Unconfigured');
+    expect(triggerType?.enumDescriptions?.[1]).toBe('1 — Short click');
+  });
+
+  it('falls back to the bare value when no label is supplied', () => {
+    const schema = buildActionsJsonSchema({ actionTypes: [50] });
+    const actionType = schema.properties?.actions?.items?.properties?.actionType;
+    expect(actionType?.enumDescriptions).toEqual(['50']);
   });
 
   it('documents param placeholders when provided', () => {

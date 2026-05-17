@@ -1,4 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { useTranslation } from 'react-i18next';
 import { RouteDialog } from '@/components/route-dialog';
 import { ActionWizard } from '@/features/actions/action-wizard';
 import { firstEmptySlotId } from '@/features/actions/helpers';
@@ -10,6 +11,7 @@ export const Route = createFileRoute('/devices/$deviceIp/actions/$inputId/new')(
 
 function NewActionDialog() {
   const { deviceIp, inputId } = Route.useParams();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const working = useActionsDraftStore((s) => s.working);
   const slotId = firstEmptySlotId(working);
@@ -18,14 +20,12 @@ function NewActionDialog() {
 
   return (
     <RouteDialog
-      title={`New action · Input ${Number(inputId) + 1}`}
-      description="Define a trigger and the HTTP GET action it fires."
+      title={t('wizard.newTitle', { n: Number(inputId) + 1 })}
+      description={t('wizard.newDescription')}
       onClose={close}
     >
       {slotId === null ? (
-        <p className="text-sm text-destructive">
-          All action slots on this device are in use. Delete an action first.
-        </p>
+        <p className="text-sm text-destructive">{t('wizard.noFreeSlots')}</p>
       ) : (
         <ActionWizard
           deviceIp={deviceIp}
