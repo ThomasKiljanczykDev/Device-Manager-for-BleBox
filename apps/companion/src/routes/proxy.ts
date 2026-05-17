@@ -65,8 +65,8 @@ function forwardableRequestHeaders(headers: Record<string, unknown>): Record<str
 
 /**
  * CORS proxy: forwards `ALL /api/proxy/:ip/*` to `http://{ip}/{rest}`.
- * Refuses any non-private IPv4 (or non-IPv4) target. Stateless; payloads are
- * never logged.
+ * Refuses any non-private IPv4 (or non-IPv4) target. Stateless; only the body
+ * of an error response (status >= 400) is logged.
  */
 export function proxyRoutes(env: CompanionEnv): FastifyPluginAsync {
   return async (app) => {
@@ -109,7 +109,19 @@ export function proxyRoutes(env: CompanionEnv): FastifyPluginAsync {
           for (const [key, value] of upstream.headers) {
             if (!STRIPPED_HEADERS.has(key.toLowerCase())) reply.header(key, value);
           }
-          return reply.send(Buffer.from(await upstream.arrayBuffer()));
+          const payload = Buffer.from(await upstream.arrayBuffer());
+          if (upstream.status >= 400) {
+            request.log.error(
+              {
+                target,
+                method: request.method,
+                status: upstream.status,
+                body: payload.toString('utf8'),
+              },
+              'device returned an error response',
+            );
+          }
+          return reply.send(payload);
         } catch (err) {
           const timedOut = err instanceof Error && err.name === 'TimeoutError';
           request.log.error({ err, target, method: request.method }, 'proxy request failed');
