@@ -7,10 +7,11 @@ import { deriveInputCount } from '@blebox/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { getActionsState, getDeviceInfo, getStateExtended, saveActions } from '@/lib/blebox';
+import { getActionsState, getStateExtended, saveActions } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
 import { isActionsDraftDirty, useActionsDraftStore } from '@/stores/actions-draft';
 import { ActionsPanel } from '@/features/actions/actions-panel';
+import { deviceInfoQueryOptions } from '@/features/devices/queries';
 
 export const Route = createFileRoute('/devices/$deviceIp')({
   component: DeviceDetail,
@@ -21,10 +22,7 @@ function DeviceDetail() {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
 
-  const info = useQuery({
-    queryKey: queryKeys.deviceInfo(deviceIp),
-    queryFn: () => getDeviceInfo(deviceIp),
-  });
+  const info = useQuery(deviceInfoQueryOptions(deviceIp));
   const state = useQuery({
     queryKey: queryKeys.deviceState(deviceIp),
     queryFn: () => getStateExtended(deviceIp),

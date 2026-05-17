@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { Device } from '@blebox/shared';
+import { getDeviceInfo } from '@/lib/blebox';
 import { getDiscoveredDevices, startDiscovery, stopDiscovery } from '@/lib/companion';
 import { queryKeys } from '@/lib/query';
 import { useDevicesStore } from '@/stores/devices';
@@ -9,7 +10,7 @@ import { useDevicesStore } from '@/stores/devices';
 export interface DeviceListEntry {
   ip: string;
   device: Device;
-  /** Present in the latest live discovery result. */
+  /** Reachable now — the device's `/info` probe succeeded. */
   online: boolean;
   /** Manually added (vs. only seen by discovery). */
   saved: boolean;
@@ -22,6 +23,19 @@ export function useDiscoveryQuery() {
     queryFn: getDiscoveredDevices,
     refetchInterval: (query) => (query.state.data?.scanning ? 2000 : false),
   });
+}
+
+/**
+ * Shared query options for a device's `/info`. Used both by the sidebar
+ * reachability probe and the device detail page, so "online" means the same
+ * thing — a successful `/info` fetch — everywhere.
+ */
+export function deviceInfoQueryOptions(ip: string) {
+  return {
+    queryKey: queryKeys.deviceInfo(ip),
+    queryFn: () => getDeviceInfo(ip),
+    retry: false,
+  };
 }
 
 /**
@@ -40,45 +54,44 @@ export function useDiscoverySync(): void {
   }, [devices, rememberDiscovered]);
 }
 
-/** Merged device list: persisted (discovered + saved), marked online from the live poll. */
+/**
+ * Merged device list: persisted (discovered + saved), each probed for
+ * reachability via `/info` so `online` matches the device detail page.
+ */
 export function useDeviceList(): { entries: DeviceListEntry[]; scanning: boolean } {
   const discovery = useDiscoveryQuery();
   const saved = useDevicesStore((state) => state.saved);
   const discovered = useDevicesStore((state) => state.discovered);
 
-  const live = discovery.data?.devices ?? [];
-  const onlineIps = new Set(live.map((d) => d.ip));
-
-  const byIp = new Map<string, DeviceListEntry>();
+  const byIp = new Map<string, { ip: string; device: Device; saved: boolean }>();
   for (const entry of discovered) {
-    byIp.set(entry.ip, {
-      ip: entry.ip,
-      device: entry.device,
-      online: onlineIps.has(entry.ip),
-      saved: false,
-    });
+    byIp.set(entry.ip, { ip: entry.ip, device: entry.device, saved: false });
   }
   for (const entry of saved) {
     byIp.set(entry.ip, {
       ip: entry.ip,
       device: byIp.get(entry.ip)?.device ?? entry.device,
-      online: onlineIps.has(entry.ip),
       saved: true,
     });
   }
   // Fold in any live device not yet persisted (first poll before the sync effect).
-  for (const found of live) {
+  for (const found of discovery.data?.devices ?? []) {
     byIp.set(found.ip, {
       ip: found.ip,
       device: found.device,
-      online: true,
       saved: byIp.get(found.ip)?.saved ?? false,
     });
   }
 
-  const entries = [...byIp.values()].sort((a, b) =>
-    a.device.deviceName.localeCompare(b.device.deviceName),
-  );
+  const known = [...byIp.values()];
+  const probes = useQueries({
+    queries: known.map((d) => deviceInfoQueryOptions(d.ip)),
+  });
+
+  const entries: DeviceListEntry[] = known
+    .map((d, index) => ({ ...d, online: probes[index]?.isSuccess ?? false }))
+    .sort((a, b) => a.device.deviceName.localeCompare(b.device.deviceName));
+
   return { entries, scanning: discovery.data?.scanning ?? false };
 }
 
