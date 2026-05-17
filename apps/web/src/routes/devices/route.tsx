@@ -54,7 +54,7 @@ function DevicesLayout() {
                   <Link
                     to="/devices/$deviceIp"
                     params={{ deviceIp: entry.ip }}
-                    className="block rounded-md px-3 py-2 text-sm hover:bg-accent"
+                    className="block rounded-md px-3 py-2 text-sm transition-colors duration-150 hover:bg-accent"
                     activeProps={{ className: 'bg-accent' }}
                   >
                     <div className="flex items-center gap-2">
