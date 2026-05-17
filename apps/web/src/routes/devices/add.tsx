@@ -2,6 +2,7 @@ import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useForm } from '@tanstack/react-form';
 import { useMutation } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { Loader2 } from 'lucide-react';
 import { privateIpv4Schema, type Device } from '@blebox/shared';
 import { RouteDialog } from '@/components/route-dialog';
@@ -24,7 +25,13 @@ function AddDeviceDialog() {
     mutationFn: probeDevice,
     onSuccess: (device: Device, ip: string) => {
       addDevice(ip, device);
+      toast.success(t('toast.deviceAdded'));
       void navigate({ to: '/devices/$deviceIp', params: { deviceIp: ip } });
+    },
+    onError: (error: unknown) => {
+      toast.error(
+        error instanceof CompanionRequestError ? error.message : t('manualAdd.companionError'),
+      );
     },
   });
 
@@ -34,13 +41,6 @@ function AddDeviceDialog() {
       await probe.mutateAsync(value.ip.trim());
     },
   });
-
-  const errorMessage =
-    probe.error instanceof CompanionRequestError
-      ? probe.error.message
-      : probe.error
-        ? t('manualAdd.companionError')
-        : null;
 
   return (
     <RouteDialog
@@ -81,8 +81,6 @@ function AddDeviceDialog() {
             </div>
           )}
         </form.Field>
-
-        {errorMessage ? <p className="text-sm text-destructive">{errorMessage}</p> : null}
 
         <div className="flex justify-end gap-2">
           <Button type="button" variant="outline" onClick={() => navigate({ to: '/devices' })}>

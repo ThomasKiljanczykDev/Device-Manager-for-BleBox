@@ -8,6 +8,14 @@
     "discard": "Discard",
     "addManually": "Add manually"
   },
+  "toast": {
+    "saveSuccess": "Actions saved to the device",
+    "saveError": "Failed to save actions to the device",
+    "deviceAdded": "Device added",
+    "scanStarted": "Scanning for devices",
+    "scanStopped": "Scan stopped",
+    "scanError": "Scan request failed"
+  },
   "sidebar": {
     "title": "Device Manager for BleBox",
     "subtitle": "Action configuration",

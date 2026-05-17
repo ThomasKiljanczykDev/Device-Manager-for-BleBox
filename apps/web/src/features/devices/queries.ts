@@ -1,5 +1,7 @@
 import { useEffect } from 'react';
 import { useMutation, useQueries, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import type { Device } from '@blebox/shared';
 import { getDeviceInfo } from '@/lib/blebox';
 import { getDiscoveredDevices, startDiscovery, stopDiscovery } from '@/lib/companion';
@@ -98,9 +100,24 @@ export function useDeviceList(): { entries: DeviceListEntry[]; scanning: boolean
 /** Start/stop scan mutations, wired to invalidate the discovery query. */
 export function useScanControls() {
   const queryClient = useQueryClient();
+  const { t } = useTranslation();
   const invalidate = () => queryClient.invalidateQueries({ queryKey: queryKeys.discovery });
 
-  const start = useMutation({ mutationFn: startDiscovery, onSuccess: invalidate });
-  const stop = useMutation({ mutationFn: stopDiscovery, onSuccess: invalidate });
+  const start = useMutation({
+    mutationFn: startDiscovery,
+    onSuccess: () => {
+      void invalidate();
+      toast.success(t('toast.scanStarted'));
+    },
+    onError: () => toast.error(t('toast.scanError')),
+  });
+  const stop = useMutation({
+    mutationFn: stopDiscovery,
+    onSuccess: () => {
+      void invalidate();
+      toast.success(t('toast.scanStopped'));
+    },
+    onError: () => toast.error(t('toast.scanError')),
+  });
   return { start, stop };
 }

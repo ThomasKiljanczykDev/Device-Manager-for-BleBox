@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { AlertCircle, Braces, Loader2, RotateCcw, Save } from 'lucide-react';
 import { deriveInputCount } from '@blebox/shared';
 import { Badge } from '@/components/ui/badge';
@@ -62,6 +63,10 @@ function DeviceDetail() {
     onSuccess: async () => {
       useActionsDraftStore.getState().commitSnapshot();
       await queryClient.invalidateQueries({ queryKey: queryKeys.deviceActions(deviceIp) });
+      toast.success(t('toast.saveSuccess'));
+    },
+    onError: () => {
+      toast.error(t('toast.saveError'));
     },
   });
 
@@ -108,12 +113,6 @@ function DeviceDetail() {
           {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} {t('common.save')}
         </Button>
       </header>
-
-      {save.isError ? (
-        <p className="flex items-center gap-2 border-b bg-destructive/10 px-6 py-2 text-sm text-destructive">
-          <AlertCircle className="size-4" /> {t('deviceDetail.saveError')}
-        </p>
-      ) : null}
 
       <div className="p-6">
         {actions.isPending ? (
