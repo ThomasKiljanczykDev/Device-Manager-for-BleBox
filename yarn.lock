@@ -2837,24 +2837,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"blebox-device-manager@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "blebox-device-manager@workspace:."
-  dependencies:
-    "@eslint/js": "npm:^9.39.4"
-    "@openapitools/openapi-generator-cli": "npm:^2.32.0"
-    concurrently: "npm:^9.2.1"
-    eslint: "npm:^9.39.4"
-    eslint-config-prettier: "npm:^10.1.8"
-    eslint-plugin-react-hooks: "npm:^7.1.1"
-    eslint-plugin-react-refresh: "npm:^0.5.2"
-    globals: "npm:^17.6.0"
-    prettier: "npm:^3.8.3"
-    typescript: "npm:^5.9.3"
-    typescript-eslint: "npm:^8.59.3"
-  languageName: unknown
-  linkType: soft
-
 "bonjour-service@npm:^1.3.0":
   version: 1.3.0
   resolution: "bonjour-service@npm:1.3.0"
@@ -3254,6 +3236,24 @@ __metadata:
   checksum: 10c0/e562f00de23f10c27d7119e1af0e7388407eb4b06596a25f6d79a360094a109ff285de317f02b090faae093d314cf6e73ac3214f8a5bb3a0def5bece94557fbe
   languageName: node
   linkType: hard
+
+"device-manager-for-blebox@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "device-manager-for-blebox@workspace:."
+  dependencies:
+    "@eslint/js": "npm:^9.39.4"
+    "@openapitools/openapi-generator-cli": "npm:^2.32.0"
+    concurrently: "npm:^9.2.1"
+    eslint: "npm:^9.39.4"
+    eslint-config-prettier: "npm:^10.1.8"
+    eslint-plugin-react-hooks: "npm:^7.1.1"
+    eslint-plugin-react-refresh: "npm:^0.5.2"
+    globals: "npm:^17.6.0"
+    prettier: "npm:^3.8.3"
+    typescript: "npm:^5.9.3"
+    typescript-eslint: "npm:^8.59.3"
+  languageName: unknown
+  linkType: soft
 
 "diff@npm:^8.0.2":
   version: 8.0.4

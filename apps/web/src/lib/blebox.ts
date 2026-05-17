@@ -2,8 +2,8 @@ import {
   actionsStateSchema,
   deviceInfoSchema,
   stateExtendedSchema,
+  type Action,
   type ActionsState,
-  type ActionWrite,
   type Device,
   type StateExtended,
 } from '@blebox/shared';
@@ -41,12 +41,10 @@ export async function getActionsState(ip: string): Promise<ActionsState> {
 }
 
 /**
- * Persists one action slot via `POST /api/actions/set`.
- *
- * INFERRED / UNVERIFIED: the request body `{ action: {...} }` is a best guess
- * — see `actionSetPayloadSchema` and `docs/action-shape.md`.
+ * Persists one action via `POST /api/actions/set` — the endpoint takes a single
+ * action at a time, wrapped as `{ action }` (matches the device's wBox UI).
  */
-export async function saveAction(ip: string, action: ActionWrite): Promise<void> {
+export async function saveAction(ip: string, action: Action): Promise<void> {
   const res = await fetch(proxyUrl(ip, 'api/actions/set'), {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
@@ -57,8 +55,8 @@ export async function saveAction(ip: string, action: ActionWrite): Promise<void>
   }
 }
 
-/** Persists every given action slot sequentially (one upsert request each). */
-export async function saveActions(ip: string, actions: ActionWrite[]): Promise<void> {
+/** Persists every given action sequentially (one upsert request each). */
+export async function saveActions(ip: string, actions: Action[]): Promise<void> {
   for (const action of actions) {
     await saveAction(ip, action);
   }

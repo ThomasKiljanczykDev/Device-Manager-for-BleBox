@@ -3,7 +3,7 @@
 /* eslint-disable */
 /**
  * BleBox Companion API
- * Discovery and CORS-proxy service for the BleBox Device Manager.
+ * Discovery and CORS-proxy service for Device Manager for BleBox.
  *
  * The version of the OpenAPI document: 0.1.0
  * 

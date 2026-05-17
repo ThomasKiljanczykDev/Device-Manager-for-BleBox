@@ -1,4 +1,4 @@
-# BleBox Device Manager
+# Device Manager for BleBox
 
 A dev-only, desktop-class web app for defining and editing **action
 configurations** (input trigger → HTTP action) on BleBox Switch / Light Switch

@@ -20,11 +20,14 @@ export const lastCallSchema = z.object({
 export type LastCall = z.infer<typeof lastCallSchema>;
 
 /**
- * A single action slot. The device exposes a fixed array of `itemsLimit` slots;
- * an unconfigured slot has `triggerType: 0`, `actionType: 0`, `param: ""` and
- * omits `triggerParam`/`intervalS`/`throttleS`.
+ * A single action slot. The device exposes a fixed array of `itemsLimit` slots.
+ *
+ * Modelled as a **loose** object: the field set varies by device/firmware —
+ * e.g. some switchBox hardware adds `relay`, `forTime` and `ns`. Unknown fields
+ * are preserved so the action can be round-tripped back to `/api/actions/set`
+ * intact; dropping them makes the device reject the save with HTTP 400.
  */
-export const actionSchema = z.object({
+export const actionSchema = z.looseObject({
   id: z.number().int().nonnegative(),
   name: z.string(),
   input: z.number().int().nonnegative(),
@@ -33,16 +36,14 @@ export const actionSchema = z.object({
   triggerParam: z.number().int().optional(),
   intervalS: z.number().int().nonnegative().optional(),
   throttleS: z.number().int().nonnegative().optional(),
+  relay: z.number().int().optional(),
+  forTime: z.number().int().optional(),
+  ns: z.number().int().optional(),
   param: z.string(),
   lastCall: lastCallSchema.optional(),
 });
 
 export type Action = z.infer<typeof actionSchema>;
-
-/** An action as written back to the device: `lastCall` is stripped (read-only). */
-export const actionWriteSchema = actionSchema.omit({ lastCall: true });
-
-export type ActionWrite = z.infer<typeof actionWriteSchema>;
 
 /** A numeric constraint range (e.g. `triggerParam` bounds for power triggers). */
 export const numericRangeSchema = z.object({
@@ -87,21 +88,22 @@ export type ActionsState = z.infer<typeof actionsStateSchema>;
  * draft, not a device payload.
  */
 export const actionsDocumentSchema = z.object({
-  actions: z.array(actionWriteSchema),
+  actions: z.array(actionSchema),
 });
 
 export type ActionsDocument = z.infer<typeof actionsDocumentSchema>;
 
 /**
- * `POST /api/actions/set` request body — a single-slot upsert keyed by `id`.
+ * `POST /api/actions/set` request body — a single-action upsert keyed by `id`.
+ * The endpoint takes one action at a time.
  *
- * INFERRED / UNVERIFIED: the action CRUD surface is undocumented. A re-post of
- * the full `{ actions: [...] }` array returned HTTP 400, so this single-action
- * wrapper (mirroring `/api/settings/set`'s `{ settings: ... }`) is the working
- * assumption. See `docs/action-shape.md` — confirm against hardware.
+ * Verified against the device's own wBox UI bundle (`settings.js` sends
+ * `payload: { action: n }`). The action object is round-tripped: the device's
+ * object is sent back with only the edited fields changed. See
+ * `docs/action-shape.md`.
  */
 export const actionSetPayloadSchema = z.object({
-  action: actionWriteSchema,
+  action: actionSchema,
 });
 
 export type ActionSetPayload = z.infer<typeof actionSetPayloadSchema>;

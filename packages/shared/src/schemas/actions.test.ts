@@ -4,7 +4,6 @@ import {
   actionSetPayloadSchema,
   actionsDocumentSchema,
   actionsStateSchema,
-  actionWriteSchema,
   allowedActionTypes,
   allowedTriggerTypes,
   deriveInputCount,
@@ -91,18 +90,28 @@ describe('actionSchema', () => {
   });
 });
 
-describe('actionWriteSchema', () => {
-  it('strips lastCall from the type but tolerates extra keys being absent', () => {
-    const parsed = actionWriteSchema.parse(sample.actions[0]);
-    expect('lastCall' in parsed).toBe(false);
+describe('device-specific fields round-trip', () => {
+  it('preserves unknown/extra action fields (e.g. relay/forTime/ns)', () => {
+    const withExtras = {
+      ...sample.actions[0],
+      relay: 0,
+      forTime: 0,
+      ns: 0,
+      hwSpecific: 'keep-me',
+    };
+    const parsed = actionSchema.parse(withExtras);
+    expect(parsed.relay).toBe(0);
+    expect(parsed.forTime).toBe(0);
+    expect(parsed.ns).toBe(0);
+    expect((parsed as Record<string, unknown>).hwSpecific).toBe('keep-me');
   });
 });
 
 describe('set / document payloads', () => {
-  it('actionSetPayloadSchema wraps a single action and strips lastCall', () => {
+  it('actionSetPayloadSchema wraps a single action', () => {
     const result = actionSetPayloadSchema.safeParse({ action: sample.actions[0] });
     expect(result.success).toBe(true);
-    if (result.success) expect('lastCall' in result.data.action).toBe(false);
+    if (result.success) expect(result.data.action.id).toBe(0);
   });
 
   it('actionSetPayloadSchema rejects an array payload', () => {

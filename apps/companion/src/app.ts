@@ -30,7 +30,7 @@ export async function buildApp(env: CompanionEnv): Promise<FastifyInstance> {
       info: {
         title: 'BleBox Companion API',
         version: '0.1.0',
-        description: 'Discovery and CORS-proxy service for the BleBox Device Manager.',
+        description: 'Discovery and CORS-proxy service for Device Manager for BleBox.',
       },
     },
     transform: jsonSchemaTransform,

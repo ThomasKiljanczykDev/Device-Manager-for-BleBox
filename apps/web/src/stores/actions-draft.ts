@@ -7,14 +7,16 @@ import {
   type FieldPreference,
 } from '@blebox/shared';
 
-/** An empty/unconfigured slot at a given id. */
-function emptySlot(id: number): Action {
+/** Resets a slot to unconfigured, preserving device-specific fields. */
+function clearSlot(slot: Action): Action {
   return {
-    id,
+    ...slot,
     name: '',
-    input: 0,
     triggerType: TRIGGER_TYPE_UNCONFIGURED,
     actionType: ACTION_TYPE_UNCONFIGURED,
+    triggerParam: 0,
+    intervalS: 0,
+    throttleS: 0,
     param: '',
   };
 }
@@ -69,7 +71,7 @@ export const useActionsDraftStore = create<ActionsDraftState>((set) => ({
 
   deleteAction: (id) =>
     set((draft) => ({
-      working: draft.working.map((slot) => (slot.id === id ? emptySlot(id) : slot)),
+      working: draft.working.map((slot) => (slot.id === id ? clearSlot(slot) : slot)),
     })),
 
   replaceAll: (actions) => set({ working: actions }),
@@ -83,5 +85,3 @@ export const useActionsDraftStore = create<ActionsDraftState>((set) => ({
 export function isActionsDraftDirty(state: Pick<ActionsDraftState, 'working' | 'snapshot'>): boolean {
   return JSON.stringify(state.working) !== JSON.stringify(state.snapshot);
 }
-
-export { emptySlot };

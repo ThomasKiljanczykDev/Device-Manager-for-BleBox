@@ -14,7 +14,7 @@ whether it is documented publicly or inferred from the device.
 | Method | Path | Notes |
 |---|---|---|
 | `GET` | `/api/actions/state` | Returns the actions array + `fieldsPreferences`. Confirmed on device. |
-| `POST` | `/api/actions/set` | Save. `GET` returns `405`, so `POST` is the write verb. **Payload shape inferred — see below.** |
+| `POST` | `/api/actions/set` | Save. Takes one action at a time, `{ "action": {...} }` — see below. |
 
 Actions do **not** appear in `/api/settings/state` (that endpoint's `switch`
 object is empty) — they have their own endpoint.
@@ -64,7 +64,14 @@ An empty slot omits `triggerParam`/`intervalS`/`throttleS`:
 | `triggerParam` | observed | Numeric parameter; meaningful for power triggers (`42`/`43`). |
 | `intervalS`, `throttleS` | observed | Seconds; apply to power triggers (`42`/`43`). |
 | `param` | observed | For `actionType 50` the HTTP GET URL (placeholders `{s_state.0}`, `{power_w.0}`); empty string for native switch actions (`1/2/3`). |
+| `relay`, `forTime`, `ns` | observed | Present on some switchBox hardware (e.g. `192.168.88.188`, `hv …1.5…`), absent on others (`192.168.88.200`, `hv …1.4…`). Not edited by this app. |
 | `lastCall` | observed | Server-managed runtime telemetry (`timeElapsedS`, optional `response`). **Read-only — stripped before save.** `timeElapsedS: -1` = never called. |
+
+> **The action field set varies by device/firmware.** The app models the action
+> as a *loose* object (`actionSchema` in `@blebox/shared`) and round-trips every
+> field: a save sends the device's own object back with only the edited fields
+> changed. Dropping device-specific fields (`relay`/`forTime`/`ns`) makes
+> `/api/actions/set` reject the save with HTTP 400.
 
 ### Trigger types
 
@@ -111,24 +118,29 @@ hardcoded. Observed entries:
 The shared helpers `allowedTriggerTypes`, `allowedActionTypes`,
 `triggerParamRange`, `triggerUsesInterval`, `deriveInputCount` interpret it.
 
-## `POST /api/actions/set` payload — INFERRED, UNVERIFIED
+## `POST /api/actions/set` payload — verified
 
-This shape could not be confirmed on hardware:
+`/api/actions/set` is **not** in any public BleBox OpenAPI spec, but the shape
+was confirmed from the device's own built-in wBox UI bundle (`settings.js`
+served at `http://<device>/settings.js`), which sends:
 
-- Re-posting the full `{ "actions": [ ... ] }` array returned **HTTP 400**.
-- A second probe (`{ "action": { ... } }`, a single-slot upsert) was blocked by
-  the environment's write-safety guard before it could run.
+```js
+payload: { action: n }   // n = one action object
+```
 
-The app therefore assumes a **single-slot upsert**, mirroring the documented
-`/api/settings/set` convention (`{ "settings": {...} }` → `{ "action": {...} }`):
+So the endpoint takes **one action at a time**, wrapped as `{ "action": {...} }`:
 
 ```jsonc
 POST /api/actions/set
 { "action": { "id": 0, "name": "...", "input": 0, "triggerType": 1,
-              "actionType": 50, "triggerParam": 0, "intervalS": 0,
-              "throttleS": 0, "param": "http://..." } }
+              "actionType": 1, "relay": 0, "forTime": 0, "triggerParam": 0,
+              "intervalS": 0, "throttleS": 0, "ns": 0, "param": "" } }
 ```
 
-`saveActions` posts one such request per changed slot. **Confirm this against a
-real device** — `actionSetPayloadSchema` in `@blebox/shared` and `saveAction`
-in `apps/web/src/lib/blebox.ts` are the two places to adjust if it differs.
+The action object must be **round-tripped** — sent back with the same fields the
+device returned (including device-specific `relay`/`forTime`/`ns`), changing
+only what the user edited. Posting the full `{ "actions": [ ... ] }` array, or a
+single action missing device-specific fields, returns **HTTP 400**.
+
+`saveAction` (`apps/web/src/lib/blebox.ts`) posts one request per changed slot;
+`actionSetPayloadSchema` / `actionSchema` (`@blebox/shared`) model the payload.

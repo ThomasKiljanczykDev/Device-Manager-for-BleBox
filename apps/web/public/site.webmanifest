@@ -1,5 +1,5 @@
 {
-  "name": "BleBox Device Manager",
+  "name": "Device Manager for BleBox",
   "short_name": "BleBox",
   "icons": [
     { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },

@@ -9,7 +9,7 @@
     "addManually": "Add manually"
   },
   "sidebar": {
-    "title": "BleBox Device Manager",
+    "title": "Device Manager for BleBox",
     "subtitle": "Action configuration",
     "startScan": "Start scan",
     "stopScan": "Stop scan",
