@@ -117,10 +117,13 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
     onSubmit: ({ value }) => {
       const usesInterval = triggerUsesInterval(fieldsPreferences, value.triggerType);
       const isSwitch = value.kind === 'switch-device';
-      // Start from the device's existing slot so device-specific fields
-      // (relay/forTime/ns/…) are preserved on save; only edited fields change.
-      const base = useActionsDraftStore.getState().working.find((a) => a.id === actionId);
+      // Layer: device field template (so device-specific fields like
+      // relay/forTime/ns are always present, even for a new action filling an
+      // empty slot) -> the slot's current values -> the edited fields.
+      const draft = useActionsDraftStore.getState();
+      const base = draft.working.find((a) => a.id === actionId);
       const action: Action = {
+        ...draft.actionTemplate,
         ...base,
         id: actionId,
         name: value.name.trim(),

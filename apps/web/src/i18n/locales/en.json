@@ -50,7 +50,7 @@
   },
   "jsonEditor": {
     "title": "Edit actions JSON",
-    "description": "Schema-validated editor for the full actions array. Applying updates the in-memory draft; use Save on the device page to persist.",
+    "description": "Schema-validated editor for the device's configured actions. Removing an entry clears its slot. Applying updates the in-memory draft; use Save on the device page to persist.",
     "apply": "Apply changes",
     "invalidJson": "Invalid JSON: {{message}}",
     "schemaError": "Does not match the action schema: {{message}}",

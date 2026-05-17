@@ -12,6 +12,7 @@ import {
 import '@/lib/monaco';
 import { RouteDialog } from '@/components/route-dialog';
 import { Button } from '@/components/ui/button';
+import { configuredActions } from '@/features/actions/helpers';
 import { actionTypeLabel, triggerTypeLabel } from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 
@@ -29,9 +30,12 @@ function JsonEditorDialog() {
   const navigate = useNavigate();
   const working = useActionsDraftStore((s) => s.working);
   const fieldsPreferences = useActionsDraftStore((s) => s.fieldsPreferences);
-  const replaceAll = useActionsDraftStore((s) => s.replaceAll);
+  const mergeActions = useActionsDraftStore((s) => s.mergeActions);
 
-  const [text, setText] = useState(() => JSON.stringify({ actions: working }, null, 2));
+  // Only the configured actions are shown — the device's empty slots are hidden.
+  const [text, setText] = useState(() =>
+    JSON.stringify({ actions: configuredActions(working) }, null, 2),
+  );
   const [error, setError] = useState<string | null>(null);
 
   const schema = useMemo(() => {
@@ -77,7 +81,7 @@ function JsonEditorDialog() {
       );
       return;
     }
-    replaceAll(result.data.actions);
+    mergeActions(result.data.actions);
     await close();
   };
 
