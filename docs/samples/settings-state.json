@@ -1,0 +1,127 @@
+{
+  "settings": {
+    "deviceName": "SimonGO Kitchen",
+    "statusLed": {
+      "enabled": 1
+    },
+    "buttonsBacklight": {
+      "enabled": 1
+    },
+    "relays": [
+      {
+        "stateAfterRestart": 2,
+        "defaultForTime": 0,
+        "iconSet": 27
+      }
+    ],
+    "switch": {},
+    "powerMeasuring": {
+      "enabled": 1,
+      "safetyValue": {
+        "activePower": 0,
+        "fieldsPreferences": [
+          {
+            "name": "activePower",
+            "minValue": 200,
+            "maxValue": 3680,
+            "specialValues": {
+              "off": 0
+            }
+          }
+        ]
+      },
+      "factoryCalibration": {
+        "isCalibrated": 0
+      }
+    },
+    "fieldsPreferences": [
+      {
+        "name": "iconSet",
+        "values": [
+          38,
+          59,
+          36,
+          54,
+          58,
+          27,
+          28,
+          29,
+          30,
+          31,
+          32,
+          33,
+          34,
+          37,
+          47,
+          48,
+          49,
+          50,
+          69,
+          70,
+          71,
+          74,
+          76,
+          78,
+          79,
+          168,
+          169,
+          170,
+          171,
+          172,
+          173,
+          174,
+          175,
+          176,
+          177,
+          178,
+          179,
+          180,
+          181,
+          182,
+          183,
+          184,
+          185,
+          186,
+          187,
+          188,
+          189,
+          190,
+          191,
+          192,
+          193,
+          194,
+          195,
+          196,
+          197,
+          78,
+          79,
+          44,
+          43,
+          46,
+          60,
+          61,
+          35,
+          125,
+          40,
+          41,
+          45,
+          42,
+          128,
+          130,
+          132,
+          133,
+          134,
+          142,
+          39,
+          161,
+          162,
+          163,
+          164,
+          165,
+          166,
+          167
+        ]
+      }
+    ]
+  }
+}

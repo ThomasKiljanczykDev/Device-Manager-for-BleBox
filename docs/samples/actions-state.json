@@ -1,0 +1,599 @@
+{
+  "actions": [
+    {
+      "id": 0,
+      "name": "IN1 - OUT OFF",
+      "input": 0,
+      "triggerType": 1,
+      "actionType": 50,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "triggerParam": 0,
+      "intervalS": 0,
+      "throttleS": 0,
+      "param": "http://192.168.88.217:8123/api/webhook/REDACTED?action=off"
+    },
+    {
+      "id": 1,
+      "name": "IN2 - OUT ON",
+      "input": 1,
+      "triggerType": 1,
+      "actionType": 50,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "triggerParam": 0,
+      "intervalS": 0,
+      "throttleS": 0,
+      "param": "http://192.168.88.217:8123/api/webhook/REDACTED?action=on"
+    },
+    {
+      "id": 2,
+      "name": "IN3 - OUT OFF",
+      "input": 2,
+      "triggerType": 1,
+      "actionType": 50,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "triggerParam": 0,
+      "intervalS": 0,
+      "throttleS": 0,
+      "param": "http://192.168.88.217:8123/api/webhook/REDACTED?action=off"
+    },
+    {
+      "id": 3,
+      "name": "IN4 - OUT ON",
+      "input": 3,
+      "triggerType": 1,
+      "actionType": 50,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "triggerParam": 0,
+      "intervalS": 0,
+      "throttleS": 0,
+      "param": "http://192.168.88.217:8123/api/webhook/REDACTED?action=on"
+    },
+    {
+      "id": 4,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 5,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 6,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 7,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 8,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 9,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 10,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 11,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 12,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 13,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 14,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 15,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 16,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 17,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 18,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 19,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 20,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 21,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 22,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 23,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 24,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 25,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 26,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 27,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 28,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    },
+    {
+      "id": 29,
+      "name": "",
+      "input": 0,
+      "triggerType": 0,
+      "actionType": 0,
+      "lastCall": {
+        "timeElapsedS": -1
+      },
+      "param": ""
+    }
+  ],
+  "itemsLimit": 30,
+  "fieldsPreferences": [
+    {
+      "name": "triggerType",
+      "values": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        19,
+        42,
+        43
+      ],
+      "dependsOn": "input",
+      "constraints": [
+        {
+          "input": null,
+          "triggerType": [
+            19,
+            42,
+            43
+          ]
+        },
+        {
+          "input": 0,
+          "triggerType": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input": 1,
+          "triggerType": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input": 2,
+          "triggerType": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input": 3,
+          "triggerType": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        },
+        {
+          "input": 4,
+          "triggerType": [
+            1,
+            2,
+            3,
+            4,
+            5
+          ]
+        }
+      ]
+    },
+    {
+      "name": "triggerParam",
+      "dependsOn": "triggerType",
+      "constraints": [
+        {
+          "triggerType": 42,
+          "triggerParam": {
+            "minValue": 0,
+            "maxValue": 3680,
+            "multiplier": 1
+          }
+        },
+        {
+          "triggerType": 43,
+          "triggerParam": {
+            "minValue": 0,
+            "maxValue": 3680,
+            "multiplier": 1
+          }
+        }
+      ]
+    },
+    {
+      "name": "actionType",
+      "dependsOn": "triggerType",
+      "constraints": [
+        {
+          "triggerType": 1,
+          "actionType": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 2,
+          "actionType": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 3,
+          "actionType": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 4,
+          "actionType": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 5,
+          "actionType": [
+            1,
+            2,
+            3,
+            5,
+            6,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 19,
+          "actionType": [
+            1,
+            2,
+            3,
+            7,
+            8,
+            9,
+            10,
+            50,
+            51,
+            53
+          ]
+        },
+        {
+          "triggerType": 42,
+          "actionType": [
+            2,
+            8,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        },
+        {
+          "triggerType": 43,
+          "actionType": [
+            2,
+            8,
+            10,
+            50,
+            51,
+            52,
+            53
+          ]
+        }
+      ]
+    },
+    {
+      "name": "param",
+      "placeholders": [
+        "{s_state.0}",
+        "{power_w.0}"
+      ]
+    },
+    {
+      "name": "intervalS",
+      "dependsOn": "triggerType",
+      "dependsOnValues": [
+        42,
+        43
+      ],
+      "minValue": 0,
+      "maxValue": 65535
+    },
+    {
+      "name": "throttleS",
+      "dependsOn": "triggerType",
+      "dependsOnValues": [
+        42,
+        43
+      ],
+      "minValue": 0,
+      "maxValue": 65535
+    }
+  ]
+}

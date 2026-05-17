@@ -1,0 +1,34 @@
+{
+  "name": "device-manager-for-blebox",
+  "version": "0.1.0",
+  "private": true,
+  "packageManager": "yarn@4.14.1",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "engines": {
+    "node": ">=24"
+  },
+  "scripts": {
+    "dev": "concurrently -k -n web,companion -c blue,magenta \"yarn workspace web dev\" \"yarn workspace companion dev\"",
+    "codegen": "yarn workspace companion gen:spec && node scripts/codegen.mjs",
+    "lint": "yarn workspaces foreach -A run lint",
+    "test": "yarn workspaces foreach -A run test",
+    "typecheck": "yarn workspaces foreach -A run typecheck"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.39.4",
+    "@openapitools/openapi-generator-cli": "^2.32.0",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.4",
+    "eslint-config-prettier": "^10.1.8",
+    "eslint-plugin-react": "^7.37.5",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
+    "prettier": "^3.8.3",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.59.3"
+  }
+}
