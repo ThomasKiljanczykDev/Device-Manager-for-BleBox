@@ -90,7 +90,7 @@ function JsonEditorDialog() {
       title={t('jsonEditor.title')}
       description={t('jsonEditor.description')}
       onClose={close}
-      className="max-w-3xl"
+      className="max-w-6xl!"
     >
       <div className="overflow-hidden rounded-md border">
         <Editor

@@ -16,4 +16,5 @@ export const queryKeys = {
   deviceInfo: (ip: string) => ['device', ip, 'info'] as const,
   deviceState: (ip: string) => ['device', ip, 'state'] as const,
   deviceActions: (ip: string) => ['device', ip, 'actions'] as const,
+  deviceNetwork: (ip: string) => ['device', ip, 'network'] as const,
 };

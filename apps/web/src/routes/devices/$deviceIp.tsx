@@ -8,10 +8,12 @@ import { deriveInputCount } from '@blebox/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { getActionsState, getStateExtended, saveActions } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
 import { isActionsDraftDirty, useActionsDraftStore } from '@/stores/actions-draft';
 import { ActionsPanel } from '@/features/actions/actions-panel';
+import { ServiceConnectionPanel } from '@/features/devices/service-connection-panel';
 import { deviceInfoQueryOptions } from '@/features/devices/queries';
 
 export const Route = createFileRoute('/devices/$deviceIp')({
@@ -114,33 +116,45 @@ function DeviceDetail() {
         </Button>
       </header>
 
-      <div className="p-6">
-        {actions.isPending ? (
-          <p className="flex items-center gap-2 text-sm text-muted-foreground">
-            <Loader2 className="size-4 animate-spin" /> {t('deviceDetail.loading', { ip: deviceIp })}
-          </p>
-        ) : actions.isError ? (
-          <div className="flex flex-col items-start gap-2">
-            <p className="flex items-center gap-2 text-sm text-destructive">
-              <AlertCircle className="size-4" /> {t('deviceDetail.loadError')}
+      <Tabs defaultValue="actions" className="p-6">
+        <TabsList>
+          <TabsTrigger value="actions">{t('deviceDetail.tabActions')}</TabsTrigger>
+          <TabsTrigger value="connection">{t('deviceDetail.tabConnection')}</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="actions">
+          {actions.isPending ? (
+            <p className="flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="size-4 animate-spin" />{' '}
+              {t('deviceDetail.loading', { ip: deviceIp })}
             </p>
-            <Button variant="outline" size="sm" onClick={() => actions.refetch()}>
-              {t('common.retry')}
-            </Button>
-          </div>
-        ) : (
-          <>
-            <div className="mb-4 flex gap-4 text-xs text-muted-foreground">
-              <span>{t('deviceDetail.inputs', { count: inputCount })}</span>
-              <Separator orientation="vertical" className="h-4" />
-              <span>{t('deviceDetail.relays', { count: relayCount })}</span>
-              <Separator orientation="vertical" className="h-4" />
-              <span>{t('deviceDetail.slots', { count: itemsLimit })}</span>
+          ) : actions.isError ? (
+            <div className="flex flex-col items-start gap-2">
+              <p className="flex items-center gap-2 text-sm text-destructive">
+                <AlertCircle className="size-4" /> {t('deviceDetail.loadError')}
+              </p>
+              <Button variant="outline" size="sm" onClick={() => actions.refetch()}>
+                {t('common.retry')}
+              </Button>
             </div>
-            <ActionsPanel deviceIp={deviceIp} inputCount={inputCount} />
-          </>
-        )}
-      </div>
+          ) : (
+            <>
+              <div className="mb-4 flex gap-4 text-xs text-muted-foreground">
+                <span>{t('deviceDetail.inputs', { count: inputCount })}</span>
+                <Separator orientation="vertical" className="h-4" />
+                <span>{t('deviceDetail.relays', { count: relayCount })}</span>
+                <Separator orientation="vertical" className="h-4" />
+                <span>{t('deviceDetail.slots', { count: itemsLimit })}</span>
+              </div>
+              <ActionsPanel deviceIp={deviceIp} inputCount={inputCount} />
+            </>
+          )}
+        </TabsContent>
+
+        <TabsContent value="connection">
+          <ServiceConnectionPanel deviceIp={deviceIp} />
+        </TabsContent>
+      </Tabs>
 
       <Outlet />
     </div>
