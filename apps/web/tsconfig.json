@@ -1,4 +1,13 @@
 {
   "files": [],
-  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }]
+  "references": [{ "path": "./tsconfig.app.json" }, { "path": "./tsconfig.node.json" }],
+  // Not used by `tsc -b` (it builds the referenced projects); kept in sync with
+  // tsconfig.app.json so tools that read the root config — e.g. the shadcn CLI —
+  // resolve the `@/*` alias and place generated files under `src/`.
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
+  }
 }

@@ -46,7 +46,24 @@
     "relays_one": "{{count}} relay",
     "relays_other": "{{count}} relays",
     "slots_one": "{{count}} action slot",
-    "slots_other": "{{count}} action slots"
+    "slots_other": "{{count}} action slots",
+    "tabActions": "Actions",
+    "tabConnection": "Connection"
+  },
+  "serviceConnection": {
+    "title": "Service Connection",
+    "description": "The device's own WiFi access point, used for setup. Turning it off once the device is on your network is recommended.",
+    "enabledLabel": "Access point enabled",
+    "nameLabel": "Access point name",
+    "namePlaceholder": "e.g. switchBox-g650e32d2217",
+    "nameInvalid": "The name must be 1–32 characters.",
+    "save": "Save",
+    "discard": "Discard",
+    "loading": "Reading the device's access point…",
+    "loadError": "Could not read the access point settings.",
+    "retry": "Retry",
+    "toastSaved": "Service Connection updated",
+    "toastError": "Failed to update the Service Connection"
   },
   "manualAdd": {
     "title": "Add a device manually",

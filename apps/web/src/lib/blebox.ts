@@ -16,7 +16,7 @@ import {
  * any public BleBox spec — their shapes come from `@blebox/shared` schemas
  * reverse-engineered from a live device. See `docs/action-shape.md`.
  */
-function proxyUrl(ip: string, path: string): string {
+export function proxyUrl(ip: string, path: string): string {
   return `/api/proxy/${ip}/${path.replace(/^\/+/, '')}`;
 }
 

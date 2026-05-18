@@ -8,6 +8,7 @@ export * from './constants';
 export * from './schemas/device';
 export * from './schemas/actions';
 export * from './schemas/companion';
+export * from './schemas/wifi';
 export * from './env/companion';
 export * from './env/web';
 export * from './net/ip';
