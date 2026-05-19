@@ -3866,9 +3866,6 @@ __metadata:
     typescript: "npm:^5.9.3"
     vitest: "npm:^4.1.6"
     zod: "npm:^4.4.3"
-  dependenciesMeta:
-    node-mac-permissions:
-      optional: true
   languageName: unknown
   linkType: soft
 
