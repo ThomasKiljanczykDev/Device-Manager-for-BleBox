@@ -140,10 +140,76 @@ mod live_tests {
             "state/extended",
             "api/actions/state",
             "api/device/network",
+            "api/settings/state",
         ] {
             device_get(LIVE_IP, path, 6_000)
                 .await
                 .unwrap_or_else(|e| panic!("GET /{path} failed: {e}"));
+        }
+    }
+
+    /// Round-trip the cloud-tunnel toggle: read, flip, assert sibling settings
+    /// are preserved (partial update), then restore the original value.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn tunnel_round_trip_preserves_sibling_settings() {
+        let before = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings");
+        let original = before["settings"]["tunnel"]["enabled"]
+            .as_i64()
+            .expect("tunnel.enabled is an integer");
+        let flipped = 1 - original;
+
+        let restore = serde_json::json!({
+            "settings": { "tunnel": { "enabled": original } }
+        });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "api/settings/set",
+                serde_json::json!({ "settings": { "tunnel": { "enabled": flipped } } }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("flip POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "api/settings/state", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            if mid["settings"]["tunnel"]["enabled"].as_i64() != Some(flipped) {
+                return Err("flip did not take".into());
+            }
+            for key in [
+                "deviceName",
+                "statusLed",
+                "buttonsBacklight",
+                "relays",
+                "switch",
+                "powerMeasuring",
+            ] {
+                if mid["settings"][key] != before["settings"][key] {
+                    return Err(format!("sibling setting `{key}` changed across a partial update"));
+                }
+            }
+            Ok(())
+        }
+        .await;
+
+        // Always try to restore, even if the assertions above failed.
+        let _ = device_post(LIVE_IP, "api/settings/set", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings after restore");
+        assert_eq!(
+            after["settings"]["tunnel"]["enabled"].as_i64(),
+            Some(original),
+            "tunnel.enabled was not restored to its original value"
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
         }
     }
 }

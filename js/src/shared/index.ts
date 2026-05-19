@@ -9,5 +9,6 @@ export * from './schemas/device';
 export * from './schemas/actions';
 export * from './schemas/companion';
 export * from './schemas/wifi';
+export * from './schemas/settings';
 export * from './net/ip';
 export * from './json-schema';

@@ -14,6 +14,7 @@ import { queryKeys } from '@/lib/query';
 import { isActionsDraftDirty, useActionsDraftStore } from '@/stores/actions-draft';
 import { ActionsPanel } from '@/features/actions/actions-panel';
 import { ServiceConnectionPanel } from '@/features/devices/service-connection-panel';
+import { RemoteAccessPanel } from '@/features/devices/remote-access-panel';
 import { deviceInfoQueryOptions } from '@/features/devices/queries';
 
 export const Route = createFileRoute('/devices/$deviceIp')({
@@ -152,7 +153,10 @@ function DeviceDetail() {
         </TabsContent>
 
         <TabsContent value="connection">
-          <ServiceConnectionPanel deviceIp={deviceIp} />
+          <div className="flex flex-col gap-4">
+            <ServiceConnectionPanel deviceIp={deviceIp} />
+            <RemoteAccessPanel deviceIp={deviceIp} />
+          </div>
         </TabsContent>
       </Tabs>
 

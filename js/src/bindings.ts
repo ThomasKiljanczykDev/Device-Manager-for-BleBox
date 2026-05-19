@@ -30,6 +30,13 @@ export const commands = {
 	 *  `network` object.
 	 */
 	deviceSetNetwork: (ip: string, settings: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_set_network", { ip, settings })),
+	deviceSettingsState: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_settings_state", { ip })),
+	/**
+	 *  Updates device settings. `settings` is the JSON-encoded inner object —
+	 *  e.g. `{"tunnel":{"enabled":1}}` — and is sent wrapped as
+	 *  `{"settings": <settings>}` to `POST /api/settings/set`.
+	 */
+	deviceSettingsSet: (ip: string, settings: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_settings_set", { ip, settings })),
 };
 
 /* Types */

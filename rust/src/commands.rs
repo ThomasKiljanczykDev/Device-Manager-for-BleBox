@@ -170,3 +170,39 @@ pub async fn device_set_network(
     )
     .await
 }
+
+// --- device settings -------------------------------------------------------
+// The /api/settings/* surface — currently used for the cloud-tunnel toggle.
+// Writes are partial: the device merges the sub-object you send with the rest.
+
+#[tauri::command]
+#[specta::specta]
+pub async fn device_settings_state(
+    ip: String,
+    config: State<'_, Config>,
+) -> Result<String, CommandError> {
+    guard_ip(&ip)?;
+    let body = http::device_get(&ip, "api/settings/state", config.proxy_timeout_ms()).await?;
+    to_json(&body)
+}
+
+/// Updates device settings. `settings` is the JSON-encoded inner object —
+/// e.g. `{"tunnel":{"enabled":1}}` — and is sent wrapped as
+/// `{"settings": <settings>}` to `POST /api/settings/set`.
+#[tauri::command]
+#[specta::specta]
+pub async fn device_settings_set(
+    ip: String,
+    settings: String,
+    config: State<'_, Config>,
+) -> Result<(), CommandError> {
+    guard_ip(&ip)?;
+    let settings = parse_json(&settings)?;
+    http::device_post(
+        &ip,
+        "api/settings/set",
+        json!({ "settings": settings }),
+        config.proxy_timeout_ms(),
+    )
+    .await
+}

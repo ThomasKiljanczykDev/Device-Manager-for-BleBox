@@ -65,6 +65,18 @@
     "toastSaved": "Service Connection updated",
     "toastError": "Failed to update the Service Connection"
   },
+  "remoteAccess": {
+    "title": "Remote access (cloud)",
+    "description": "Allow this device to reach BleBox's cloud so it can be controlled remotely.",
+    "enabledLabel": "Remote access enabled",
+    "save": "Save",
+    "discard": "Discard",
+    "loading": "Reading the device's cloud-tunnel state…",
+    "loadError": "Could not read the remote-access setting.",
+    "retry": "Retry",
+    "toastSaved": "Remote access updated",
+    "toastError": "Failed to update remote access"
+  },
   "manualAdd": {
     "title": "Add a device manually",
     "description": "Enter the LAN IP address of a BleBox device.",

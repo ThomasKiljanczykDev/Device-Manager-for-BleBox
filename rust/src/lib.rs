@@ -28,6 +28,8 @@ pub fn run() {
         commands::device_save_action,
         commands::device_network,
         commands::device_set_network,
+        commands::device_settings_state,
+        commands::device_settings_set,
     ]);
 
     // Regenerate the TypeScript bindings on every debug run so the frontend
