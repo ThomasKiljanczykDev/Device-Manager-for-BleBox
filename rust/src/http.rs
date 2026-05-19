@@ -12,6 +12,7 @@ use serde_json::Value;
 use crate::error::CommandError;
 
 /// Why probing a host's `/info` endpoint failed.
+#[derive(Debug)]
 pub enum ProbeError {
     /// The request exceeded its time budget.
     Timeout,
@@ -112,5 +113,37 @@ pub async fn device_post(
         }
         Err(e) if e.is_timeout() => Err(CommandError::device_timeout()),
         Err(_) => Err(CommandError::proxy_failed()),
+    }
+}
+
+#[cfg(test)]
+mod live_tests {
+    //! Integration checks against the known live device. Excluded from normal
+    //! runs (they need the device on the LAN); run with `cargo test -- --ignored`.
+    use super::*;
+
+    const LIVE_IP: &str = "192.168.88.200";
+
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn probes_live_device_info() {
+        let body = get_info(LIVE_IP, 1_500).await.expect("probe /info");
+        assert_eq!(body["device"]["type"], "switchBox");
+        assert!(body["device"]["id"].is_string());
+    }
+
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn fetches_every_proxied_get_endpoint() {
+        for path in [
+            "info",
+            "state/extended",
+            "api/actions/state",
+            "api/device/network",
+        ] {
+            device_get(LIVE_IP, path, 6_000)
+                .await
+                .unwrap_or_else(|e| panic!("GET /{path} failed: {e}"));
+        }
     }
 }

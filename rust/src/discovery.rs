@@ -248,3 +248,29 @@ fn local_subnets() -> Vec<String> {
     }
     prefixes.into_iter().collect()
 }
+
+#[cfg(test)]
+mod live_tests {
+    //! Integration check against the known live device. Excluded from normal
+    //! runs; run with `cargo test -- --ignored`.
+    use super::*;
+
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn discovers_the_live_device() {
+        let service = DiscoveryService::new();
+        service.start(Config {
+            discovery_timeout_ms: 8_000,
+            probe_timeout_ms: 1_500,
+        });
+        // Poll until the sweep reaches 192.168.88.200, or the scan ends.
+        for _ in 0..24 {
+            tokio::time::sleep(Duration::from_millis(500)).await;
+            let snapshot = service.snapshot();
+            if snapshot.devices.iter().any(|d| d.ip == "192.168.88.200") {
+                return;
+            }
+        }
+        panic!("the subnet sweep did not discover 192.168.88.200");
+    }
+}
