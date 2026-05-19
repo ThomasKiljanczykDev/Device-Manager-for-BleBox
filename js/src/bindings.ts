@@ -4,10 +4,51 @@ import { invoke as __TAURI_INVOKE } from "@tauri-apps/api/core";
 
 /** Commands */
 export const commands = {
+	startDiscovery: () => __TAURI_INVOKE<void>("start_discovery"),
+	stopDiscovery: () => __TAURI_INVOKE<void>("stop_discovery"),
 	/**
-	 *  Liveness probe — a placeholder command so the bindings pipeline has
-	 *  something to export. Replaced by the real device commands in a later step.
+	 *  Current scan state and discovered devices, as a JSON-encoded
+	 *  `{ scanning, devices }` document.
 	 */
-	getHealth: () => __TAURI_INVOKE<string>("get_health"),
+	getDiscoveredDevices: () => typedError<string, CommandError>(__TAURI_INVOKE("get_discovered_devices")),
+	/**
+	 *  Validates an IP and probes it for a BleBox `/info` payload. Returns the
+	 *  `device` object as a JSON string on success.
+	 */
+	probeDevice: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("probe_device", { ip })),
+	deviceInfo: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_info", { ip })),
+	deviceStateExtended: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_state_extended", { ip })),
+	deviceActionsState: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_actions_state", { ip })),
+	/**
+	 *  Persists one action via `POST /api/actions/set` (single-action upsert).
+	 *  `action` is the JSON-encoded action object.
+	 */
+	deviceSaveAction: (ip: string, action: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_save_action", { ip, action })),
+	deviceNetwork: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_network", { ip })),
+	/**
+	 *  Updates the device's internal access point. `settings` is the JSON-encoded
+	 *  `network` object.
+	 */
+	deviceSetNetwork: (ip: string, settings: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_set_network", { ip, settings })),
 };
+
+/* Types */
+/**
+ *  A structured command failure. `code` is a stable machine-readable tag;
+ *  `message` is human-readable.
+ */
+export type CommandError = {
+	code: string,
+	message: string,
+};
+
+/* Tauri Specta runtime */
+async function typedError<T, E>(result: Promise<T>): Promise<{ status: "ok"; data: T } | { status: "error"; error: E }> {
+    try {
+        return { status: "ok", data: await result };
+    } catch (e) {
+        if (e instanceof Error) throw e;
+        return { status: "error", error: e as any };
+    }
+}
 
