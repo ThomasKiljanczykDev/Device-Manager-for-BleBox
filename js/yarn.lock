@@ -2353,6 +2353,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tauri-apps/api@npm:^2":
+  version: 2.11.0
+  resolution: "@tauri-apps/api@npm:2.11.0"
+  checksum: 10c0/70c9f692d14ef7a5f69aa56d474e993f2c25f393e30a26099cca198040ccd33724e4978cefd455c73ecb169b36ca9b7ee010db88b05b0a8bd4a85801caa317d6
+  languageName: node
+  linkType: hard
+
 "@tybys/wasm-util@npm:^0.10.1":
   version: 0.10.2
   resolution: "@tybys/wasm-util@npm:0.10.2"
@@ -3261,6 +3268,7 @@ __metadata:
     "@tanstack/react-router": "npm:^1.170.4"
     "@tanstack/react-router-devtools": "npm:^1.167.0"
     "@tanstack/router-plugin": "npm:^1.168.6"
+    "@tauri-apps/api": "npm:^2"
     "@types/babel__core": "npm:^7.20.5"
     "@types/node": "npm:^24.12.4"
     "@types/react": "npm:^19.2.14"

@@ -8,3 +8,13 @@ Thumbs.db
 !.vscode/extensions.json
 !.vscode/settings.json
 .ai/
+
+# dependencies
+node_modules/
+
+# Rust / Tauri build artifacts
+rust/target/
+rust/gen/schemas/
+
+# frontend build output
+js/dist/

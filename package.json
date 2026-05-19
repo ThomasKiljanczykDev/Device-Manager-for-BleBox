@@ -1,0 +1,11 @@
+{
+  "name": "blebox-device-manager",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Device Manager for BleBox — orchestrates the Tauri (rust/) shell and the React (js/) frontend",
+  "scripts": {
+    "dev": "cd rust && cargo tauri dev",
+    "build": "cd rust && cargo tauri build",
+    "tauri": "cd rust && cargo tauri"
+  }
+}
