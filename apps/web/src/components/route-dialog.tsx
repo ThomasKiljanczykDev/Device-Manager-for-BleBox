@@ -14,6 +14,11 @@ interface RouteDialogProps {
   onClose: () => void;
   children: ReactNode;
   className?: string;
+  /**
+   * Forwarded to the dialog's Escape handler. Call `event.preventDefault()` to
+   * keep the dialog open — e.g. when an embedded editor should own the keypress.
+   */
+  onEscapeKeyDown?: (event: KeyboardEvent) => void;
 }
 
 /**
@@ -27,6 +32,7 @@ export function RouteDialog({
   onClose,
   children,
   className,
+  onEscapeKeyDown,
 }: RouteDialogProps) {
   return (
     <Dialog
@@ -35,7 +41,7 @@ export function RouteDialog({
         if (!open) onClose();
       }}
     >
-      <DialogContent className={className}>
+      <DialogContent className={className} onEscapeKeyDown={onEscapeKeyDown}>
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           {description ? <DialogDescription>{description}</DialogDescription> : null}

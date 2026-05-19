@@ -1,7 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import Editor, { type Monaco } from '@monaco-editor/react';
+import Editor, { type Monaco, type OnMount } from '@monaco-editor/react';
 import {
   ACTION_TYPE,
   actionsDocumentSchema,
@@ -37,6 +37,7 @@ function JsonEditorDialog() {
     JSON.stringify({ actions: configuredActions(working) }, null, 2),
   );
   const [error, setError] = useState<string | null>(null);
+  const editorRef = useRef<Parameters<OnMount>[0] | null>(null);
 
   const schema = useMemo(() => {
     const triggerTypes = allowedTriggerTypes(fieldsPreferences, 999);
@@ -91,6 +92,12 @@ function JsonEditorDialog() {
       description={t('jsonEditor.description')}
       onClose={close}
       className="max-w-6xl!"
+      onEscapeKeyDown={(event) => {
+        // While focus is inside the editor (text, find/suggest widgets), let
+        // Monaco own Escape instead of the dialog closing.
+        const dom = editorRef.current?.getDomNode();
+        if (dom?.contains(event.target as Node)) event.preventDefault();
+      }}
     >
       <div className="overflow-hidden rounded-md border">
         <Editor
@@ -99,6 +106,9 @@ function JsonEditorDialog() {
           theme="vs-dark"
           value={text}
           beforeMount={configureSchema}
+          onMount={(editor) => {
+            editorRef.current = editor;
+          }}
           onChange={(value) => {
             setText(value ?? '');
             setError(null);
