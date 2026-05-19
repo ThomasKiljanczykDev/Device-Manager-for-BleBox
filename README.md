@@ -1,60 +1,67 @@
 # Device Manager for BleBox
 
-A dev-only, desktop-class web app for defining and editing **action
+A dev-only **Tauri desktop app** for defining and editing **action
 configurations** (input trigger → HTTP action) on BleBox Switch / Light Switch
 devices over the local network. macOS, single user, v1.
 
 ## Requirements
 
-- Node.js 24 LTS, Corepack enabled (`corepack enable`)
-- A JRE (used by `openapi-generator-cli` during codegen)
+- A Rust toolchain — install via [rustup](https://rustup.rs)
+- The Tauri CLI: `cargo install tauri-cli --version "^2.0" --locked`
+- Node.js 24 LTS, with Corepack enabled (`corepack enable`)
 - BleBox devices reachable on the LAN
 
 ## Setup & running
 
 ```sh
-yarn install
-yarn dev
+yarn --cwd js install   # install the React app's dependencies
+yarn dev                # launch the desktop app
 ```
 
-`yarn dev` is the single entry point. It:
+`yarn dev` runs `cargo tauri dev`, which builds the Rust backend, starts Vite
+for the React frontend, and opens the app window. The first run compiles the
+Rust dependency tree and takes a few minutes; later runs are fast.
 
-1. runs codegen once (`yarn codegen` — companion OpenAPI spec → typed client,
-   plus a `typescript-fetch` client per BleBox device spec);
-2. starts the **companion** service on `127.0.0.1:3001`;
-3. starts the **web** app on `:5173`, with Vite proxying `/api` to the companion.
+Build a distributable `.app` / `.dmg` with `yarn build` (output under
+`rust/target/release/bundle/macos/`).
 
-Open `http://localhost:5173`. Companion API docs: `http://localhost:3001/docs`.
+Configuration is optional — see `.env.example` for the two timeout overrides;
+export them in your shell before launching if you want non-default values.
 
-Configuration is optional — copy `.env.example` to `.env` to override defaults.
-
-Other scripts: `yarn lint`, `yarn typecheck`, `yarn test`, `yarn codegen`.
+Other scripts (run from `js/`): `yarn --cwd js lint`, `… typecheck`, `… test`.
+Rust checks: `cargo test`, `cargo clippy` (run inside `rust/`).
 
 ## Architecture
 
-Yarn Berry workspace monorepo:
+A single Tauri 2.x desktop app with two top-level directories:
 
 ```
-apps/web         Vite + React SPA — TanStack Router (file-based) / Query / Form,
-                 shadcn UI (dark-only), Monaco JSON editor, Zustand
-apps/companion   Fastify service — mDNS + subnet discovery and a CORS proxy
-packages/shared  Zod schemas + types, enums, env schemas, BleBox OpenAPI specs,
-                 generated API clients
+js/    Vite + React SPA — TanStack Router (file-based) / Query / Form,
+       shadcn UI (dark-only), Monaco JSON editor, Zustand
+rust/  Tauri 2.x crate — mDNS + subnet discovery, a typed HTTP client to
+       BleBox devices, and the commands the frontend invokes
 ```
 
-**Why a companion service?** Browsers cannot do mDNS discovery and cannot reach
-LAN devices directly (CORS / mixed content). The companion handles both:
+**Why a Rust backend?** Browsers cannot do mDNS discovery and cannot reach LAN
+devices directly (CORS / mixed content). The Rust side handles both, exposing
+[Tauri commands](https://v2.tauri.app/develop/calling-rust/) the React app calls
+via `invoke()`:
 
-- `GET /api/health`, `POST /api/discovery/start|stop`, `GET /api/discovery/devices`
-- `POST /api/devices/probe` — validates a manually entered IP, fetches `/info`
-- `ALL /api/proxy/:ip/*` — CORS proxy to a device; refuses non-private IPv4
+- `start_discovery` / `stop_discovery` / `get_discovered_devices`
+- `probe_device` — validates a manually entered IP, fetches `/info`
+- `device_info`, `device_state_extended`, `device_actions_state`,
+  `device_save_action`, `device_network`, `device_set_network` — one typed
+  command per BleBox operation; each refuses non-private IPv4
 
-All device traffic from the SPA goes through `/api/proxy/:ip/*`.
+`tauri-specta` generates `js/src/bindings.ts` from the Rust command signatures
+on every debug run; it is committed so the frontend type-checks without a Rust
+build. Device JSON crosses the boundary as strings and is validated on the
+frontend with Zod (see [`docs/decisions.md`](docs/decisions.md)).
 
 **Actions.** The action CRUD surface is undocumented by BleBox. Its shape was
 reverse-engineered from a live device — see [`docs/action-shape.md`](docs/action-shape.md).
-Actions live at `GET /api/actions/state` and save via `POST /api/actions/set`.
-The save payload shape is **inferred and unverified** (noted in the docs).
+Actions live at `device_actions_state` and save via `device_save_action`. The
+save payload shape is **inferred and unverified** (noted in the docs).
 
 **Editing flow.** The device page loads actions into an in-memory draft
 (Zustand). The wizard and the schema-validated Monaco JSON editor both edit that
@@ -71,4 +78,4 @@ device action" and "Invoke URL (GET)" — persist as `actionType: 50` (HTTP GET)
 
 In: discovery, manual add, per-input action listing/editing, wizard + JSON
 editor, save to device. Out: drafts/undo history, cloud sync, non-switch device
-families, production builds.
+families.

@@ -26,10 +26,6 @@ yarn-error.log*
 coverage/
 .nyc_output/
 
-# OpenAPI generator runtime cache
-.openapi-generator/
-.openapi-generator-cli/
-
 # env (keep .env.example)
 .env
 .env.local

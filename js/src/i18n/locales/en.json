@@ -71,7 +71,7 @@
     "ipLabel": "IP address",
     "ipPlaceholder": "192.168.1.50",
     "submit": "Probe & add",
-    "companionError": "Could not reach the companion service."
+    "companionError": "Something went wrong while probing the device."
   },
   "jsonEditor": {
     "title": "Edit actions JSON",

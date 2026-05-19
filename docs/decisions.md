@@ -3,6 +3,59 @@
 Architecture decision records, newest first. This is a dev-only v1 for a single
 user on macOS — choices favour pragmatism over generality.
 
+## Migrated to a single Tauri desktop app
+
+The two-process architecture (a React SPA talking HTTP to a Fastify "companion"
+service) is now a single **Tauri 2.x desktop app**. The repo has two top-level
+directories: `js/` (the flat React app) and `rust/` (the Tauri crate). The
+Yarn workspace, the `apps/companion` service and the OpenAPI-generated clients
+are gone. This supersedes the "Companion routes mounted under `/api`" and
+"OpenAPI client codegen" decisions below — those describe deleted code.
+
+**Companion → Tauri command mapping.** Each former HTTP route is now a typed
+Tauri command (snake_case in Rust, camelCase in `js/src/bindings.ts`):
+
+| Tauri command | Replaced companion route |
+|---|---|
+| `start_discovery` / `stop_discovery` | `POST /api/discovery/start` / `stop` |
+| `get_discovered_devices` | `GET /api/discovery/devices` |
+| `probe_device` | `POST /api/devices/probe` |
+| `device_info` | proxy `GET /info` |
+| `device_state_extended` | proxy `GET /state/extended` |
+| `device_actions_state` | proxy `GET /api/actions/state` |
+| `device_save_action` | proxy `POST /api/actions/set` |
+| `device_network` | proxy `GET /api/device/network` |
+| `device_set_network` | proxy `POST /api/device/set` |
+
+`GET /api/health` was dropped — a liveness probe is meaningless without a
+separate service. The generic `/api/proxy/:ip/*` route became one typed command
+per real device call; no AP-provisioning commands exist because the companion
+never had that feature.
+
+**Device JSON crosses the boundary as strings.** BleBox payloads are
+deliberately loose — actions must round-trip unknown fields intact — and
+`serde_json::Value` has no `specta::Type` impl in specta 2.0-rc. Rather than a
+fragile hand-written `Type` impl, commands return/accept JSON **strings**; the
+Rust side is a transport (IP allowlist + HTTP + retry/timeout) and the frontend
+`JSON.parse`s then validates with its existing Zod schemas — the single source
+of truth for shape.
+
+**`tauri-specta` version pin.** `tauri-specta` / `specta` / `specta-typescript`
+are pinned to the `2.0.0-rc.25` / `2.0.0-rc.25` / `0.0.12` set — the only
+combination that resolves and compiles together.
+
+**`invoke()` is not cancellable.** The `AbortSignal` TanStack Query passes to
+`getWifiStatus` is accepted but ignored; there is no Tauri equivalent.
+
+**Orchestration.** The root `package.json` is a thin script alias layer:
+`yarn dev` runs `cd rust && cargo tauri dev`. The Tauri CLI is found by running
+it from inside `rust/` (it has no built-in support for a non-`src-tauri/` dir).
+
+**Env / logging.** Only `DISCOVERY_TIMEOUT_MS` and `DEVICE_PROBE_TIMEOUT_MS`
+survive, read from the process environment (no `.env` auto-loading). The
+companion's `LOG_LEVEL` is not carried over — `tauri-plugin-log` is fixed at
+`Info` in debug builds.
+
 ## Actions live at their own endpoint, not in settings
 
 The brief assumed actions live in `/api/settings/state`. On the live device they
