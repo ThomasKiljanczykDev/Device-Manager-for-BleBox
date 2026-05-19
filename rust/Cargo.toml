@@ -1,0 +1,31 @@
+[package]
+name = "blebox-device-manager"
+version = "0.1.0"
+description = "Device Manager for BleBox — Tauri desktop app"
+authors = ["thomas kiljanczyk dev"]
+license = ""
+repository = ""
+edition = "2021"
+rust-version = "1.77.2"
+
+[lib]
+name = "blebox_device_manager_lib"
+crate-type = ["staticlib", "cdylib", "rlib"]
+
+[build-dependencies]
+tauri-build = { version = "2.6.2", features = [] }
+
+[dependencies]
+serde_json = "1.0"
+serde = { version = "1.0", features = ["derive"] }
+log = "0.4"
+tauri = { version = "2.11.2", features = [] }
+tauri-plugin-log = "2"
+tauri-specta = { version = "2.0.0-rc", features = ["typescript"] }
+specta = "2.0.0-rc"
+specta-typescript = "0.0"
+reqwest = { version = "0.13.3", default-features = false, features = ["json"] }
+tokio = { version = "1.52.3", features = ["sync", "time", "rt", "macros"] }
+mdns-sd = "0.19.2"
+if-addrs = "0.15.0"
+chrono = { version = "0.4.44", default-features = false, features = ["clock"] }

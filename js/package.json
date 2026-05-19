@@ -2,25 +2,54 @@
   "name": "device-manager-for-blebox",
   "version": "0.1.0",
   "private": true,
+  "type": "module",
   "packageManager": "yarn@4.14.1",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
   "engines": {
     "node": ">=24"
   },
   "scripts": {
-    "dev": "concurrently -k -n web,companion -c blue,magenta \"yarn workspace web dev\" \"yarn workspace companion dev\"",
-    "codegen": "yarn workspace companion gen:spec && node scripts/codegen.mjs",
-    "lint": "yarn workspaces foreach -A run lint",
-    "test": "yarn workspaces foreach -A run test",
-    "typecheck": "yarn workspaces foreach -A run typecheck"
+    "dev": "vite",
+    "build": "tsc -b && vite build",
+    "preview": "vite preview",
+    "lint": "eslint .",
+    "typecheck": "tsc -b",
+    "test": "vitest run --passWithNoTests"
+  },
+  "dependencies": {
+    "@monaco-editor/react": "^4.7.0",
+    "@tanstack/react-form": "^1.32.0",
+    "@tanstack/react-query": "^5.100.10",
+    "@tanstack/react-router": "^1.170.4",
+    "@tauri-apps/api": "^2",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "i18next": "^26.2.0",
+    "lucide-react": "^1.16.0",
+    "monaco-editor": "^0.55.1",
+    "radix-ui": "^1.4.3",
+    "react": "^19.2.6",
+    "react-dom": "^19.2.6",
+    "react-i18next": "^17.0.8",
+    "sonner": "^2.0.7",
+    "tailwind-merge": "^3.6.0",
+    "zod": "^4.4.3",
+    "zod-to-json-schema": "^3.25.2",
+    "zustand": "^5.0.13"
   },
   "devDependencies": {
+    "@babel/core": "^7.29.0",
     "@eslint/js": "^9.39.4",
-    "@openapitools/openapi-generator-cli": "^2.32.0",
-    "concurrently": "^9.2.1",
+    "@rolldown/plugin-babel": "^0.2.3",
+    "@tailwindcss/vite": "^4.3.0",
+    "@tanstack/react-query-devtools": "^5.100.10",
+    "@tanstack/react-router-devtools": "^1.167.0",
+    "@tanstack/router-plugin": "^1.168.6",
+    "@types/babel__core": "^7.20.5",
+    "@types/node": "^24.12.4",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.2",
+    "babel-plugin-react-compiler": "^1.0.0",
     "eslint": "^9.39.4",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-react": "^7.37.5",
@@ -28,7 +57,11 @@
     "eslint-plugin-react-refresh": "^0.5.2",
     "globals": "^17.6.0",
     "prettier": "^3.8.3",
+    "tailwindcss": "^4.3.0",
+    "tw-animate-css": "^1.4.0",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.59.3"
+    "typescript-eslint": "^8.59.3",
+    "vite": "^8.0.13",
+    "vitest": "^4.1.6"
   }
 }

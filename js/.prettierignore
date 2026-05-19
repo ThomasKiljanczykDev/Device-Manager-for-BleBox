@@ -3,6 +3,4 @@ build
 .vite
 node_modules
 **/routeTree.gen.ts
-**/src/clients
-packages/shared/blebox-specs
-packages/shared/companion.openapi.json
+src/bindings.ts

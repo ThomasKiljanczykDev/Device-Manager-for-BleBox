@@ -21,8 +21,7 @@ export default tseslint.config(
       '**/node_modules/**',
       '**/.vite/**',
       '**/routeTree.gen.ts',
-      '**/src/clients/**',
-      'packages/shared/blebox-specs/**',
+      '**/src/bindings.ts',
     ],
   },
   js.configs.recommended,
@@ -38,18 +37,18 @@ export default tseslint.config(
   },
   {
     ...react.configs.flat.recommended,
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
   },
   {
     ...react.configs.flat['jsx-runtime'],
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
   },
   {
     ...reactHooks.configs.flat.recommended,
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
   },
   {
-    files: ['apps/web/**/*.{ts,tsx}'],
+    files: ['src/**/*.{ts,tsx}'],
     languageOptions: {
       globals: { ...globals.browser },
     },
@@ -64,7 +63,7 @@ export default tseslint.config(
   },
   {
     // shadcn/ui primitives legitimately co-export components and variants.
-    files: ['apps/web/src/components/ui/**/*.tsx'],
+    files: ['src/components/ui/**/*.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
     },
@@ -72,15 +71,9 @@ export default tseslint.config(
   {
     // TanStack Router route files must export `Route` — the HMR-only rule
     // does not apply to them.
-    files: ['apps/web/src/routes/**/*.tsx'],
+    files: ['src/routes/**/*.tsx'],
     rules: {
       'react-refresh/only-export-components': 'off',
-    },
-  },
-  {
-    files: ['apps/companion/**/*.ts', 'packages/**/*.ts', 'scripts/**/*.mjs'],
-    languageOptions: {
-      globals: { ...globals.node },
     },
   },
   prettier,
