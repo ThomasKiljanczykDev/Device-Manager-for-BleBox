@@ -22,7 +22,7 @@ yarn dev                # launch the desktop app
 for the React frontend, and opens the app window. The first run compiles the
 Rust dependency tree and takes a few minutes; later runs are fast.
 
-Build a distributable `.app` / `.dmg` with `yarn build` (output under
+Build the `.app` bundle with `yarn build` (output under
 `rust/target/release/bundle/macos/`).
 
 Configuration is optional — see `.env.example` for the two timeout overrides;
