@@ -139,10 +139,12 @@ function DeviceDetail() {
         </TabsList>
 
         <TabsContent value="device">
-          <div className="grid gap-4 md:grid-cols-2 md:items-start lg:grid-cols-3">
+          <div className="grid gap-4 md:grid-cols-2 md:items-start">
             <DeviceStatePanel deviceIp={deviceIp} />
             <PowerMeasurementsPanel deviceIp={deviceIp} />
-            <DeviceSettingsPanel deviceIp={deviceIp} />
+            <div className="md:col-span-2">
+              <DeviceSettingsPanel deviceIp={deviceIp} />
+            </div>
           </div>
         </TabsContent>
 
