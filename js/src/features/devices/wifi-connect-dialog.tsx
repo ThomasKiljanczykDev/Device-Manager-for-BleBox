@@ -140,7 +140,7 @@ function WifiConnectForm({ deviceIp, onClose }: { deviceIp: string; onClose: () 
       <DialogHeader>
         <DialogTitle>{t('wifiDetails.dialog.title')}</DialogTitle>
         <DialogDescription className="flex items-center gap-2">
-          {t('wifiDetails.dialog.listDescription')}
+          <span className="flex-1">{t('wifiDetails.dialog.listDescription')}</span>
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
