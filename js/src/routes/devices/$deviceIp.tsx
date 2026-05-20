@@ -133,7 +133,7 @@ function DeviceDetail() {
         ) : null}
       </header>
 
-      <Tabs defaultValue="device" className="@container max-w-4xl p-6">
+      <Tabs defaultValue="device" className="@container max-w-5xl p-6">
         <TabsList>
           <TabsTrigger value="device">{t('deviceDetail.tabDevice')}</TabsTrigger>
           <TabsTrigger value="actions">{t('deviceDetail.tabActions')}</TabsTrigger>
