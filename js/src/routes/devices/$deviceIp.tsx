@@ -133,7 +133,7 @@ function DeviceDetail() {
         ) : null}
       </header>
 
-      <Tabs defaultValue="device" className="p-6">
+      <Tabs defaultValue="device" className="@container max-w-4xl p-6">
         <TabsList>
           <TabsTrigger value="device">{t('deviceDetail.tabDevice')}</TabsTrigger>
           <TabsTrigger value="actions">{t('deviceDetail.tabActions')}</TabsTrigger>
@@ -141,7 +141,7 @@ function DeviceDetail() {
         </TabsList>
 
         <TabsContent value="device">
-          <div className="grid gap-4 md:grid-cols-2">
+          <div className="grid gap-4 @3xl:grid-cols-2">
             <DeviceStatePanel deviceIp={deviceIp} />
             <PowerMeasurementsPanel deviceIp={deviceIp} />
             <DeviceSettingsPanel deviceIp={deviceIp} />
@@ -186,10 +186,10 @@ function DeviceDetail() {
         </TabsContent>
 
         <TabsContent value="connection">
-          <div className="grid gap-4 md:grid-cols-2">
-            <RemoteAccessPanel deviceIp={deviceIp} />
+          <div className="grid gap-4 @3xl:grid-cols-2">
             <ServiceConnectionPanel deviceIp={deviceIp} />
-            <div className="md:col-span-2">
+            <RemoteAccessPanel deviceIp={deviceIp} />
+            <div className="@3xl:col-span-2">
               <WifiDetailsPanel deviceIp={deviceIp} />
             </div>
           </div>
