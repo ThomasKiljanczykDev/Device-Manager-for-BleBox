@@ -177,26 +177,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "blebox-device-manager"
-version = "0.1.0"
-dependencies = [
- "chrono",
- "if-addrs",
- "log",
- "mdns-sd",
- "reqwest",
- "serde",
- "serde_json",
- "specta",
- "specta-typescript",
- "tauri",
- "tauri-build",
- "tauri-plugin-log",
- "tauri-specta",
- "tokio",
-]
-
-[[package]]
 name = "block-buffer"
 version = "0.10.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -673,6 +653,26 @@ dependencies = [
  "quote",
  "rustc_version",
  "syn 2.0.117",
+]
+
+[[package]]
+name = "device-manager-for-blebox"
+version = "0.1.0"
+dependencies = [
+ "chrono",
+ "if-addrs",
+ "log",
+ "mdns-sd",
+ "reqwest",
+ "serde",
+ "serde_json",
+ "specta",
+ "specta-typescript",
+ "tauri",
+ "tauri-build",
+ "tauri-plugin-log",
+ "tauri-specta",
+ "tokio",
 ]
 
 [[package]]

@@ -1,5 +1,5 @@
 {
-  "name": "blebox-device-manager",
+  "name": "device-manager-for-blebox",
   "version": "0.1.0",
   "private": true,
   "description": "Device Manager for BleBox — orchestrates the Tauri (rust/) shell and the React (js/) frontend",
