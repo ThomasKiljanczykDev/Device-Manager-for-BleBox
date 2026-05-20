@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { createFileRoute, Link, Outlet } from '@tanstack/react-router';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import { AlertCircle, Braces, Loader2, RotateCcw, Save } from 'lucide-react';
+import { AlertCircle, Braces, Loader2, Pencil, RotateCcw, Save } from 'lucide-react';
 import { deriveInputCount } from '@/shared';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -13,6 +13,9 @@ import { getActionsState, getStateExtended, saveActions } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
 import { isActionsDraftDirty, useActionsDraftStore } from '@/stores/actions-draft';
 import { ActionsPanel } from '@/features/actions/actions-panel';
+import { DeviceStatePanel } from '@/features/devices/device-state-panel';
+import { PowerMeasurementsPanel } from '@/features/devices/power-measurements-panel';
+import { RenameDialog } from '@/features/devices/rename-dialog';
 import { ServiceConnectionPanel } from '@/features/devices/service-connection-panel';
 import { RemoteAccessPanel } from '@/features/devices/remote-access-panel';
 import { deviceInfoQueryOptions } from '@/features/devices/queries';
@@ -25,6 +28,7 @@ function DeviceDetail() {
   const { deviceIp } = Route.useParams();
   const { t } = useTranslation();
   const queryClient = useQueryClient();
+  const [renameOpen, setRenameOpen] = useState(false);
 
   const info = useQuery(deviceInfoQueryOptions(deviceIp));
   const state = useQuery({
@@ -83,7 +87,19 @@ function DeviceDetail() {
     <div className="flex min-h-full flex-col">
       <header className="flex flex-wrap items-center gap-3 border-b p-6">
         <div className="mr-auto">
-          <h2 className="text-lg font-semibold">{info.data?.deviceName ?? deviceIp}</h2>
+          <div className="flex items-center gap-1">
+            <h2 className="text-lg font-semibold">{info.data?.deviceName ?? deviceIp}</h2>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label={t('deviceDetail.rename.title')}
+              disabled={!info.data}
+              onClick={() => setRenameOpen(true)}
+            >
+              <Pencil className="size-4" />
+            </Button>
+          </div>
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="secondary">{info.data?.type ?? t('deviceDetail.unknownType')}</Badge>
             {info.data?.apiLevel ? (
@@ -112,16 +128,26 @@ function DeviceDetail() {
             <RotateCcw /> {t('common.discard')}
           </Button>
         ) : null}
-        <Button size="sm" disabled={!dirty || save.isPending} onClick={() => save.mutate()}>
-          {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} {t('common.save')}
-        </Button>
+        {dirty ? (
+          <Button size="sm" disabled={save.isPending} onClick={() => save.mutate()}>
+            {save.isPending ? <Loader2 className="animate-spin" /> : <Save />} {t('common.save')}
+          </Button>
+        ) : null}
       </header>
 
-      <Tabs defaultValue="actions" className="p-6">
+      <Tabs defaultValue="device" className="p-6">
         <TabsList>
+          <TabsTrigger value="device">{t('deviceDetail.tabDevice')}</TabsTrigger>
           <TabsTrigger value="actions">{t('deviceDetail.tabActions')}</TabsTrigger>
           <TabsTrigger value="connection">{t('deviceDetail.tabConnection')}</TabsTrigger>
         </TabsList>
+
+        <TabsContent value="device">
+          <div className="flex flex-col gap-4">
+            <DeviceStatePanel deviceIp={deviceIp} />
+            <PowerMeasurementsPanel deviceIp={deviceIp} />
+          </div>
+        </TabsContent>
 
         <TabsContent value="actions">
           {actions.isPending ? (
@@ -159,6 +185,13 @@ function DeviceDetail() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <RenameDialog
+        deviceIp={deviceIp}
+        device={info.data}
+        open={renameOpen}
+        onOpenChange={setRenameOpen}
+      />
 
       <Outlet />
     </div>

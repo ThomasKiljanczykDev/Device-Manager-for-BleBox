@@ -47,8 +47,37 @@
     "relays_other": "{{count}} relays",
     "slots_one": "{{count}} action slot",
     "slots_other": "{{count}} action slots",
+    "tabDevice": "Device",
     "tabActions": "Actions",
-    "tabConnection": "Connection"
+    "tabConnection": "Connection",
+    "rename": {
+      "title": "Rename device",
+      "description": "Update the device's display name. Stored on the device itself, 1–31 characters.",
+      "label": "Device name",
+      "placeholder": "e.g. SimonGO Kitchen",
+      "save": "Save",
+      "cancel": "Cancel",
+      "lengthError": "The name must be 1–31 characters.",
+      "toastSaved": "Device renamed",
+      "toastError": "Failed to rename the device"
+    }
+  },
+  "devicePanel": {
+    "stateTitle": "State",
+    "stateDescription": "Current on/off state of the device's relay outputs.",
+    "loading": "Reading the device state…",
+    "loadError": "Could not read the device state.",
+    "noRelays": "This device has no relay outputs.",
+    "on": "On",
+    "off": "Off",
+    "relayLabel": "Relay {{n}}",
+    "toggleError": "Failed to toggle the relay.",
+    "powerTitle": "Power",
+    "powerDescription": "Live readings from the device's power-measurement sensor.",
+    "activePower": "Active power",
+    "consumption": "Consumption",
+    "watts": "{{value}} W",
+    "kwh": "{{value}} kWh"
   },
   "serviceConnection": {
     "title": "Service Connection",

@@ -31,3 +31,13 @@ export async function setRemoteAccess(ip: string, enabled: boolean): Promise<voi
     ),
   );
 }
+
+/**
+ * `POST /api/settings/set` — partial update for the device's display name.
+ * BleBox enforces 0–31 characters; callers should clamp before calling.
+ */
+export async function setDeviceName(ip: string, name: string): Promise<void> {
+  await unwrap(
+    commands.deviceSettingsSet(ip, JSON.stringify({ deviceName: name })),
+  );
+}

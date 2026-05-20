@@ -117,6 +117,21 @@ pub async fn device_actions_state(
     to_json(&body)
 }
 
+/// Writes the relay-state document via `POST /state`. `payload` is the
+/// JSON-encoded body — typically `{"relays":[{"relay":N,"state":0|1|2}]}`
+/// (`2` toggles). Used by the Device tab's on/off switch.
+#[tauri::command]
+#[specta::specta]
+pub async fn device_set_state(
+    ip: String,
+    payload: String,
+    config: State<'_, Config>,
+) -> Result<(), CommandError> {
+    guard_ip(&ip)?;
+    let body = parse_json(&payload)?;
+    http::device_post(&ip, "state", body, config.proxy_timeout_ms()).await
+}
+
 /// Persists one action via `POST /api/actions/set` (single-action upsert).
 /// `action` is the JSON-encoded action object.
 #[tauri::command]

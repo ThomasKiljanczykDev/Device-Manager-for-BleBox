@@ -26,6 +26,7 @@ pub fn run() {
         commands::device_state_extended,
         commands::device_actions_state,
         commands::device_save_action,
+        commands::device_set_state,
         commands::device_network,
         commands::device_set_network,
         commands::device_settings_state,

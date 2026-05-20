@@ -24,6 +24,12 @@ export const commands = {
 	 *  `action` is the JSON-encoded action object.
 	 */
 	deviceSaveAction: (ip: string, action: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_save_action", { ip, action })),
+	/**
+	 *  Writes the relay-state document via `POST /state`. `payload` is the
+	 *  JSON-encoded body — typically `{"relays":[{"relay":N,"state":0|1|2}]}`
+	 *  (`2` toggles). Used by the Device tab's on/off switch.
+	 */
+	deviceSetState: (ip: string, payload: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_set_state", { ip, payload })),
 	deviceNetwork: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_network", { ip })),
 	/**
 	 *  Updates the device's internal access point. `settings` is the JSON-encoded

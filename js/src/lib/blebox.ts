@@ -48,3 +48,20 @@ export async function saveActions(ip: string, actions: Action[]): Promise<void> 
     await saveAction(ip, action);
   }
 }
+
+/**
+ * Toggles a single relay via `POST /state` — `state` is `0` (off) or `1` (on).
+ * (The device also accepts `2` for toggle, which this app never uses.)
+ */
+export async function setRelayState(
+  ip: string,
+  relay: number,
+  state: 0 | 1,
+): Promise<void> {
+  await unwrap(
+    commands.deviceSetState(
+      ip,
+      JSON.stringify({ relays: [{ relay, state }] }),
+    ),
+  );
+}

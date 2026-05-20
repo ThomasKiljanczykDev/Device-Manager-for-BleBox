@@ -212,4 +212,105 @@ mod live_tests {
             panic!("{msg}");
         }
     }
+
+    /// Toggle relay 0, assert the flip, restore. Briefly switches the load.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn relay_round_trip() {
+        let before = device_get(LIVE_IP, "state/extended", 6_000)
+            .await
+            .expect("read state");
+        let original = before["relays"][0]["state"]
+            .as_i64()
+            .expect("relays[0].state is an integer");
+        let flipped = 1 - original;
+
+        let restore = serde_json::json!({ "relays": [{ "relay": 0, "state": original }] });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "state",
+                serde_json::json!({ "relays": [{ "relay": 0, "state": flipped }] }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("flip POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "state/extended", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            if mid["relays"][0]["state"].as_i64() != Some(flipped) {
+                return Err("flip did not take".into());
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "state", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "state/extended", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["relays"][0]["state"].as_i64(),
+            Some(original),
+            "relays[0].state was not restored",
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
+
+    /// Rename the device to a probe name, assert, restore the original.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn device_name_round_trip() {
+        let before = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings");
+        let original = before["settings"]["deviceName"]
+            .as_str()
+            .expect("deviceName is a string")
+            .to_string();
+        let probe_name = format!("{}_t", &original[..original.len().min(29)]);
+
+        let restore = serde_json::json!({
+            "settings": { "deviceName": original.clone() }
+        });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "api/settings/set",
+                serde_json::json!({ "settings": { "deviceName": probe_name.clone() } }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("rename POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "api/settings/state", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            if mid["settings"]["deviceName"].as_str() != Some(probe_name.as_str()) {
+                return Err("rename did not take".into());
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "api/settings/set", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["settings"]["deviceName"].as_str(),
+            Some(original.as_str()),
+            "deviceName was not restored",
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
 }
