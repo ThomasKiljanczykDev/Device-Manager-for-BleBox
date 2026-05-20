@@ -186,10 +186,12 @@ function DeviceDetail() {
         </TabsContent>
 
         <TabsContent value="connection">
-          <div className="flex flex-col gap-4">
-            <WifiDetailsPanel deviceIp={deviceIp} />
+          <div className="grid gap-4 md:grid-cols-2">
             <RemoteAccessPanel deviceIp={deviceIp} />
             <ServiceConnectionPanel deviceIp={deviceIp} />
+            <div className="md:col-span-2">
+              <WifiDetailsPanel deviceIp={deviceIp} />
+            </div>
           </div>
         </TabsContent>
       </Tabs>
