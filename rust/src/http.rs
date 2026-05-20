@@ -116,6 +116,37 @@ pub async fn device_post(
     }
 }
 
+/// Like [`device_post`], but returns the device's JSON response body (e.g.
+/// `/api/wifi/connect` echoes `{ssid, station_status}`). Non-idempotent —
+/// never retried.
+pub async fn device_post_json(
+    ip: &str,
+    path: &str,
+    body: Value,
+    timeout_ms: u64,
+) -> Result<Value, CommandError> {
+    let url = format!("http://{ip}/{}", path.trim_start_matches('/'));
+    match client()
+        .post(&url)
+        .timeout(Duration::from_millis(timeout_ms))
+        .json(&body)
+        .send()
+        .await
+    {
+        Ok(res) => {
+            let status = res.status();
+            let payload = res.json::<Value>().await.unwrap_or(Value::Null);
+            if status.is_success() {
+                Ok(payload)
+            } else {
+                Err(CommandError::device_status(status.as_u16()))
+            }
+        }
+        Err(e) if e.is_timeout() => Err(CommandError::device_timeout()),
+        Err(_) => Err(CommandError::proxy_failed()),
+    }
+}
+
 #[cfg(test)]
 mod live_tests {
     //! Integration checks against the known live device. Excluded from normal
@@ -146,6 +177,19 @@ mod live_tests {
                 .await
                 .unwrap_or_else(|e| panic!("GET /{path} failed: {e}"));
         }
+    }
+
+    /// `GET /api/wifi/scan` returns a non-empty list of nearby access points.
+    /// Read-only — never connects.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn wifi_scan_returns_aps() {
+        let body = device_get(LIVE_IP, "api/wifi/scan", 6_000)
+            .await
+            .expect("wifi scan");
+        let aps = body["ap"].as_array().expect("ap is an array");
+        assert!(!aps.is_empty(), "expected at least one nearby AP");
+        assert!(aps[0]["ssid"].is_string(), "AP entries have an ssid");
     }
 
     /// Round-trip the cloud-tunnel toggle: read, flip, assert sibling settings

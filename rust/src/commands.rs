@@ -208,6 +208,37 @@ pub async fn device_ota_update(
     .await
 }
 
+// --- wifi client -----------------------------------------------------------
+// The device's connection to the home network (not its own AP).
+
+/// Lists nearby access points via `GET /api/wifi/scan` (`{ap: [...]}`).
+#[tauri::command]
+#[specta::specta]
+pub async fn device_wifi_scan(
+    ip: String,
+    config: State<'_, Config>,
+) -> Result<String, CommandError> {
+    guard_ip(&ip)?;
+    let body = http::device_get(&ip, "api/wifi/scan", config.proxy_timeout_ms()).await?;
+    to_json(&body)
+}
+
+/// Joins a network via `POST /api/wifi/connect`. `payload` is the JSON-encoded
+/// `{ ssid, pwd }` (`pwd` null/empty for an open network). Returns the device's
+/// `{ ssid, station_status }` response.
+#[tauri::command]
+#[specta::specta]
+pub async fn device_wifi_connect(
+    ip: String,
+    payload: String,
+    config: State<'_, Config>,
+) -> Result<String, CommandError> {
+    guard_ip(&ip)?;
+    let body = parse_json(&payload)?;
+    let resp = http::device_post_json(&ip, "api/wifi/connect", body, config.proxy_timeout_ms()).await?;
+    to_json(&resp)
+}
+
 // --- device settings -------------------------------------------------------
 // The /api/settings/* surface — currently used for the cloud-tunnel toggle.
 // Writes are partial: the device merges the sub-object you send with the rest.

@@ -37,6 +37,14 @@ export const commands = {
 	 *  (does not wait for the install).
 	 */
 	deviceOtaUpdate: (ip: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_ota_update", { ip })),
+	/**  Lists nearby access points via `GET /api/wifi/scan` (`{ap: [...]}`). */
+	deviceWifiScan: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_wifi_scan", { ip })),
+	/**
+	 *  Joins a network via `POST /api/wifi/connect`. `payload` is the JSON-encoded
+	 *  `{ ssid, pwd }` (`pwd` null/empty for an open network). Returns the device's
+	 *  `{ ssid, station_status }` response.
+	 */
+	deviceWifiConnect: (ip: string, payload: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_wifi_connect", { ip, payload })),
 	deviceNetwork: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_network", { ip })),
 	/**
 	 *  Updates the device's internal access point. `settings` is the JSON-encoded

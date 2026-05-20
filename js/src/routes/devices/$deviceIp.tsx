@@ -20,6 +20,7 @@ import { PowerMeasurementsPanel } from '@/features/devices/power-measurements-pa
 import { RenameDialog } from '@/features/devices/rename-dialog';
 import { ServiceConnectionPanel } from '@/features/devices/service-connection-panel';
 import { RemoteAccessPanel } from '@/features/devices/remote-access-panel';
+import { WifiDetailsPanel } from '@/features/devices/wifi-details-panel';
 import { deviceInfoQueryOptions } from '@/features/devices/queries';
 
 export const Route = createFileRoute('/devices/$deviceIp')({
@@ -186,6 +187,7 @@ function DeviceDetail() {
 
         <TabsContent value="connection">
           <div className="flex flex-col gap-4">
+            <WifiDetailsPanel deviceIp={deviceIp} />
             <RemoteAccessPanel deviceIp={deviceIp} />
             <ServiceConnectionPanel deviceIp={deviceIp} />
           </div>
