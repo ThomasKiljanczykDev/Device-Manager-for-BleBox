@@ -69,7 +69,7 @@ export function DeviceStatePanel({ deviceIp }: DeviceStatePanelProps) {
                 <div key={r.relay} className="flex items-center gap-4">
                   <Power
                     className={cn(
-                      'size-12 transition-colors',
+                      'size-12 transition-colors duration-300 ease-in-out',
                       on ? 'text-emerald-500' : 'text-muted-foreground',
                     )}
                     aria-hidden
