@@ -30,6 +30,13 @@ export const commands = {
 	 *  (`2` toggles). Used by the Device tab's on/off switch.
 	 */
 	deviceSetState: (ip: string, payload: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_set_state", { ip, payload })),
+	/**
+	 *  Triggers the device's OTA firmware update via `POST /api/ota/update`. The
+	 *  spec accepts no body; the device pulls the new firmware from BleBox's
+	 *  cloud over its tunnel. Returns when the device has accepted the request
+	 *  (does not wait for the install).
+	 */
+	deviceOtaUpdate: (ip: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_ota_update", { ip })),
 	deviceNetwork: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_network", { ip })),
 	/**
 	 *  Updates the device's internal access point. `settings` is the JSON-encoded

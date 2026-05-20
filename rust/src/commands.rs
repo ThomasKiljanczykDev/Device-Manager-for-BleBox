@@ -186,6 +186,28 @@ pub async fn device_set_network(
     .await
 }
 
+// --- firmware update -------------------------------------------------------
+
+/// Triggers the device's OTA firmware update via `POST /api/ota/update`. The
+/// spec accepts no body; the device pulls the new firmware from BleBox's
+/// cloud over its tunnel. Returns when the device has accepted the request
+/// (does not wait for the install).
+#[tauri::command]
+#[specta::specta]
+pub async fn device_ota_update(
+    ip: String,
+    config: State<'_, Config>,
+) -> Result<(), CommandError> {
+    guard_ip(&ip)?;
+    http::device_post(
+        &ip,
+        "api/ota/update",
+        serde_json::Value::Null,
+        config.proxy_timeout_ms(),
+    )
+    .await
+}
+
 // --- device settings -------------------------------------------------------
 // The /api/settings/* surface — currently used for the cloud-tunnel toggle.
 // Writes are partial: the device merges the sub-object you send with the rest.

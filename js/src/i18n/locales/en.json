@@ -79,6 +79,30 @@
     "kwh": "{{value}} kWh",
     "refresh": "Refresh"
   },
+  "deviceDetails": {
+    "title": "Device details",
+    "description": "Identifiers and firmware version reported by the device.",
+    "identifier": "Identifier",
+    "type": "Type",
+    "hardware": "Hardware version",
+    "firmware": "Firmware version",
+    "checkForUpdates": "Check for updates",
+    "updateAvailable": "Update available: {{version}}",
+    "updateButton": "Update firmware",
+    "loading": "Reading the device details…",
+    "loadError": "Could not read the device details.",
+    "retry": "Retry"
+  },
+  "firmwareUpdate": {
+    "title": "Updating firmware",
+    "descriptionPending": "This may take a few minutes. Don't power off the device.",
+    "inProgress": "Updating from {{from}} to {{to}}…",
+    "done": "Updated to {{version}}.",
+    "doneShort": "Firmware {{version}} installed.",
+    "error": "Update failed — {{message}}",
+    "errorTimeout": "The update didn't complete in time.",
+    "close": "Close"
+  },
   "serviceConnection": {
     "title": "Service Connection",
     "description": "The device's own WiFi access point, used for setup. Turning it off once the device is on your network is recommended.",

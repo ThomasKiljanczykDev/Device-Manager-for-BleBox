@@ -65,3 +65,13 @@ export async function setRelayState(
     ),
   );
 }
+
+/**
+ * Triggers `POST /api/ota/update` — the device begins pulling the new
+ * firmware from BleBox's cloud (via its tunnel). The endpoint returns as
+ * soon as the device has accepted the request; the actual install runs
+ * asynchronously on-device. Callers poll `/info` to detect completion.
+ */
+export async function triggerOtaUpdate(ip: string): Promise<void> {
+  await unwrap(commands.deviceOtaUpdate(ip));
+}
