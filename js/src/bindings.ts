@@ -24,6 +24,27 @@ export const commands = {
 	 *  `action` is the JSON-encoded action object.
 	 */
 	deviceSaveAction: (ip: string, action: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_save_action", { ip, action })),
+	/**
+	 *  Writes the relay-state document via `POST /state`. `payload` is the
+	 *  JSON-encoded body — typically `{"relays":[{"relay":N,"state":0|1|2}]}`
+	 *  (`2` toggles). Used by the Device tab's on/off switch.
+	 */
+	deviceSetState: (ip: string, payload: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_set_state", { ip, payload })),
+	/**
+	 *  Triggers the device's OTA firmware update via `POST /api/ota/update`. The
+	 *  spec accepts no body; the device pulls the new firmware from BleBox's
+	 *  cloud over its tunnel. Returns when the device has accepted the request
+	 *  (does not wait for the install).
+	 */
+	deviceOtaUpdate: (ip: string) => typedError<null, CommandError>(__TAURI_INVOKE("device_ota_update", { ip })),
+	/**  Lists nearby access points via `GET /api/wifi/scan` (`{ap: [...]}`). */
+	deviceWifiScan: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_wifi_scan", { ip })),
+	/**
+	 *  Joins a network via `POST /api/wifi/connect`. `payload` is the JSON-encoded
+	 *  `{ ssid, pwd }` (`pwd` null/empty for an open network). Returns the device's
+	 *  `{ ssid, station_status }` response.
+	 */
+	deviceWifiConnect: (ip: string, payload: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_wifi_connect", { ip, payload })),
 	deviceNetwork: (ip: string) => typedError<string, CommandError>(__TAURI_INVOKE("device_network", { ip })),
 	/**
 	 *  Updates the device's internal access point. `settings` is the JSON-encoded

@@ -116,6 +116,37 @@ pub async fn device_post(
     }
 }
 
+/// Like [`device_post`], but returns the device's JSON response body (e.g.
+/// `/api/wifi/connect` echoes `{ssid, station_status}`). Non-idempotent —
+/// never retried.
+pub async fn device_post_json(
+    ip: &str,
+    path: &str,
+    body: Value,
+    timeout_ms: u64,
+) -> Result<Value, CommandError> {
+    let url = format!("http://{ip}/{}", path.trim_start_matches('/'));
+    match client()
+        .post(&url)
+        .timeout(Duration::from_millis(timeout_ms))
+        .json(&body)
+        .send()
+        .await
+    {
+        Ok(res) => {
+            let status = res.status();
+            let payload = res.json::<Value>().await.unwrap_or(Value::Null);
+            if status.is_success() {
+                Ok(payload)
+            } else {
+                Err(CommandError::device_status(status.as_u16()))
+            }
+        }
+        Err(e) if e.is_timeout() => Err(CommandError::device_timeout()),
+        Err(_) => Err(CommandError::proxy_failed()),
+    }
+}
+
 #[cfg(test)]
 mod live_tests {
     //! Integration checks against the known live device. Excluded from normal
@@ -146,6 +177,19 @@ mod live_tests {
                 .await
                 .unwrap_or_else(|e| panic!("GET /{path} failed: {e}"));
         }
+    }
+
+    /// `GET /api/wifi/scan` returns a non-empty list of nearby access points.
+    /// Read-only — never connects.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn wifi_scan_returns_aps() {
+        let body = device_get(LIVE_IP, "api/wifi/scan", 6_000)
+            .await
+            .expect("wifi scan");
+        let aps = body["ap"].as_array().expect("ap is an array");
+        assert!(!aps.is_empty(), "expected at least one nearby AP");
+        assert!(aps[0]["ssid"].is_string(), "AP entries have an ssid");
     }
 
     /// Round-trip the cloud-tunnel toggle: read, flip, assert sibling settings
@@ -206,6 +250,172 @@ mod live_tests {
             after["settings"]["tunnel"]["enabled"].as_i64(),
             Some(original),
             "tunnel.enabled was not restored to its original value"
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
+
+    /// Toggle relay 0, assert the flip, restore. Briefly switches the load.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn relay_round_trip() {
+        let before = device_get(LIVE_IP, "state/extended", 6_000)
+            .await
+            .expect("read state");
+        let original = before["relays"][0]["state"]
+            .as_i64()
+            .expect("relays[0].state is an integer");
+        let flipped = 1 - original;
+
+        let restore = serde_json::json!({ "relays": [{ "relay": 0, "state": original }] });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "state",
+                serde_json::json!({ "relays": [{ "relay": 0, "state": flipped }] }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("flip POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "state/extended", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            if mid["relays"][0]["state"].as_i64() != Some(flipped) {
+                return Err("flip did not take".into());
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "state", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "state/extended", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["relays"][0]["state"].as_i64(),
+            Some(original),
+            "relays[0].state was not restored",
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
+
+    /// Rename the device to a probe name, assert, restore the original.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn device_name_round_trip() {
+        let before = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings");
+        let original = before["settings"]["deviceName"]
+            .as_str()
+            .expect("deviceName is a string")
+            .to_string();
+        let probe_name = format!("{}_t", &original[..original.len().min(29)]);
+
+        let restore = serde_json::json!({
+            "settings": { "deviceName": original.clone() }
+        });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "api/settings/set",
+                serde_json::json!({ "settings": { "deviceName": probe_name.clone() } }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("rename POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "api/settings/state", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            if mid["settings"]["deviceName"].as_str() != Some(probe_name.as_str()) {
+                return Err("rename did not take".into());
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "api/settings/set", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["settings"]["deviceName"].as_str(),
+            Some(original.as_str()),
+            "deviceName was not restored",
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
+
+    /// Flip `powerMeasuring.enabled` via a *nested* partial body and assert
+    /// the sibling sub-fields (`safetyValue`, `factoryCalibration`) are
+    /// preserved byte-identical. Proves the assumption the DeviceSettings
+    /// panel makes when it sends `{powerMeasuring:{enabled:N}}`.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn power_measuring_nested_partial_preserves() {
+        let before = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings");
+        let pm_before = before["settings"]["powerMeasuring"].clone();
+        let original = pm_before["enabled"]
+            .as_i64()
+            .expect("powerMeasuring.enabled is an integer");
+        let flipped = 1 - original;
+
+        let restore = serde_json::json!({
+            "settings": { "powerMeasuring": { "enabled": original } }
+        });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "api/settings/set",
+                serde_json::json!({
+                    "settings": { "powerMeasuring": { "enabled": flipped } }
+                }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("flip POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "api/settings/state", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            let pm_mid = &mid["settings"]["powerMeasuring"];
+            if pm_mid["enabled"].as_i64() != Some(flipped) {
+                return Err("flip did not take".into());
+            }
+            for key in ["safetyValue", "factoryCalibration"] {
+                if pm_mid[key] != pm_before[key] {
+                    return Err(format!(
+                        "powerMeasuring.{key} changed across a nested partial update"
+                    ));
+                }
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "api/settings/set", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["settings"]["powerMeasuring"]["enabled"].as_i64(),
+            Some(original),
+            "powerMeasuring.enabled was not restored",
         );
 
         if let Err(msg) = result {

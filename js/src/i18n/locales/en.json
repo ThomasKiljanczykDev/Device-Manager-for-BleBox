@@ -33,7 +33,6 @@
     "emptyBody": "Scan the local network for BleBox switches, or add one manually by IP."
   },
   "deviceDetail": {
-    "editJson": "Edit raw JSON",
     "online": "Online",
     "offline": "Offline",
     "unknownType": "unknown",
@@ -47,8 +46,65 @@
     "relays_other": "{{count}} relays",
     "slots_one": "{{count}} action slot",
     "slots_other": "{{count}} action slots",
+    "tabDevice": "Device",
     "tabActions": "Actions",
-    "tabConnection": "Connection"
+    "tabConnection": "Connection",
+    "rename": {
+      "title": "Rename device",
+      "description": "Update the device's display name. Stored on the device itself, 1–31 characters.",
+      "label": "Device name",
+      "placeholder": "e.g. SimonGO Kitchen",
+      "save": "Save",
+      "cancel": "Cancel",
+      "lengthError": "The name must be 1–31 characters.",
+      "toastSaved": "Device renamed",
+      "toastError": "Failed to rename the device"
+    }
+  },
+  "devicePanel": {
+    "stateTitle": "State",
+    "stateDescription": "Current on/off state of the device's relay outputs.",
+    "loading": "Reading the device state…",
+    "loadError": "Could not read the device state.",
+    "noRelays": "This device has no relay outputs.",
+    "on": "On",
+    "off": "Off",
+    "relayLabel": "Relay {{n}}",
+    "toggleError": "Failed to toggle the relay.",
+    "powerTitle": "Power",
+    "powerDescription": "Live readings from the device's power-measurement sensor.",
+    "activePower": "Active power",
+    "consumption": "Consumption",
+    "watts": "{{value}} W",
+    "kwh": "{{value}} kWh",
+    "refresh": "Refresh readings"
+  },
+  "deviceDetails": {
+    "title": "Device details",
+    "description": "Identifiers and firmware version reported by the device.",
+    "identifier": "Identifier",
+    "type": "Type",
+    "hardware": "Hardware version",
+    "firmware": "Firmware version",
+    "checkForUpdates": "Check for updates",
+    "updateAvailable": "Update available: {{version}}",
+    "updateFoundToast": "Firmware update available: {{version}}",
+    "upToDateToast": "Firmware is up to date.",
+    "checkFailedToast": "Couldn't check for updates.",
+    "updateButton": "Update firmware",
+    "loading": "Reading the device details…",
+    "loadError": "Could not read the device details.",
+    "retry": "Retry"
+  },
+  "firmwareUpdate": {
+    "title": "Updating firmware",
+    "descriptionPending": "This may take a few minutes. Don't power off the device.",
+    "inProgress": "Updating from {{from}} to {{to}}…",
+    "done": "Updated to {{version}}.",
+    "doneShort": "Firmware {{version}} installed.",
+    "error": "Update failed — {{message}}",
+    "errorTimeout": "The update didn't complete in time.",
+    "close": "Close"
   },
   "serviceConnection": {
     "title": "Service Connection",
@@ -77,6 +133,63 @@
     "toastSaved": "Remote access updated",
     "toastError": "Failed to update remote access"
   },
+  "wifiDetails": {
+    "title": "WiFi connection details",
+    "description": "The device's connection to your home WiFi network.",
+    "statusLabel": "Client status",
+    "ipLabel": "Local IP address",
+    "ssidLabel": "SSID",
+    "bssidLabel": "BSSID",
+    "channelLabel": "Channel",
+    "macLabel": "Device MAC address",
+    "chooseNetwork": "Choose another network",
+    "loading": "Reading the WiFi connection…",
+    "loadError": "Could not read the WiFi connection.",
+    "retry": "Retry",
+    "status": {
+      "notConfigured": "Not configured",
+      "connecting": "Connecting…",
+      "wrongPassword": "Wrong password",
+      "notFound": "Network not found",
+      "commFailed": "Communication failed",
+      "connected": "Connected",
+      "unknown": "Unknown"
+    },
+    "dialog": {
+      "title": "Choose a WiFi network",
+      "listDescription": "Pick a network for the device to join.",
+      "rescan": "Rescan networks",
+      "scanning": "Scanning for networks…",
+      "scanError": "Could not scan for networks.",
+      "retry": "Retry",
+      "empty": "No networks found.",
+      "secured": "Password-protected",
+      "step2Title": "Connect to {{ssid}}",
+      "passwordPrompt": "Enter the network password.",
+      "openNote": "This is an open network — no password needed.",
+      "passwordLabel": "Password",
+      "passwordPlaceholder": "Network password",
+      "back": "Back",
+      "connect": "Connect",
+      "cancel": "Cancel",
+      "connectingToast": "Connecting to {{ssid}}…",
+      "connectError": "Failed to start the connection."
+    }
+  },
+  "deviceSettings": {
+    "title": "Device settings",
+    "description": "Per-device configuration toggles stored in the device's settings document.",
+    "statusLedLabel": "Status LED",
+    "buttonsBacklightLabel": "Buttons backlight",
+    "powerMeasuringLabel": "Power measuring",
+    "save": "Save",
+    "discard": "Discard",
+    "loading": "Reading the device settings…",
+    "loadError": "Could not read the device settings.",
+    "retry": "Retry",
+    "toastSaved": "Device settings updated",
+    "toastError": "Failed to update the device settings"
+  },
   "manualAdd": {
     "title": "Add a device manually",
     "description": "Enter the LAN IP address of a BleBox device.",
@@ -85,7 +198,7 @@
     "submit": "Probe & add",
     "companionError": "Something went wrong while probing the device."
   },
-  "jsonEditor": {
+  "actionsJsonEditor": {
     "title": "Edit actions JSON",
     "description": "Schema-validated editor for the device's configured actions. Removing an entry clears its slot. Applying updates the in-memory draft; use Save on the device page to persist.",
     "apply": "Apply changes",
@@ -95,6 +208,7 @@
     "parseError": "parse error"
   },
   "actionsPanel": {
+    "editJson": "Edit raw JSON",
     "inputTitle": "Input {{n}}",
     "addAction": "Add action",
     "slotsFull": "All 30 action slots are in use",

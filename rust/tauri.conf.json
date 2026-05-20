@@ -1,8 +1,8 @@
 {
   "$schema": "https://schema.tauri.app/config/2",
-  "productName": "device-manager-for-blebox",
+  "productName": "Device Manager for BleBox",
   "version": "0.1.0",
-  "identifier": "dev.kiljanczyk.blebox-device-manager",
+  "identifier": "dev.kiljanczyk.device-manager-for-blebox",
   "build": {
     "frontendDist": "../js/dist",
     "devUrl": "http://localhost:5173",

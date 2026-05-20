@@ -2,5 +2,5 @@
 #![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 fn main() {
-    blebox_device_manager_lib::run();
+    device_manager_for_blebox_lib::run();
 }

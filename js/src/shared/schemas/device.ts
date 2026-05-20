@@ -42,14 +42,42 @@ export const inputStateSchema = z
   })
   .passthrough();
 
+/** A sensor entry from `GET /state/extended` (e.g. `{type: "activePower", value: 5}`). */
+export const sensorSchema = z
+  .object({
+    type: z.string(),
+    value: z.number(),
+    trend: z.number().optional(),
+    state: z.number().optional(),
+  })
+  .passthrough();
+
+/** One window of accumulated consumption (kWh) over `periodS` seconds. */
+export const powerConsumptionEntrySchema = z
+  .object({
+    periodS: z.number(),
+    value: z.number(),
+  })
+  .passthrough();
+
+/** `powerMeasuring` sub-object from `GET /state/extended` (switchBox / switchBoxD). */
+export const powerMeasuringSchema = z
+  .object({
+    enabled: z.number().int().optional(),
+    powerConsumption: z.array(powerConsumptionEntrySchema).optional(),
+  })
+  .passthrough();
+
 /**
- * `GET /state/extended` payload. Intentionally permissive — only `relays`
- * and `inputs` are read by this app; everything else is kept via passthrough.
+ * `GET /state/extended` payload. Intentionally permissive — only the listed
+ * sub-trees are read by this app; everything else is kept via passthrough.
  */
 export const stateExtendedSchema = z
   .object({
     relays: z.array(relayStateSchema).optional(),
     inputs: z.array(inputStateSchema).optional(),
+    sensors: z.array(sensorSchema).optional(),
+    powerMeasuring: powerMeasuringSchema.optional(),
   })
   .passthrough();
 

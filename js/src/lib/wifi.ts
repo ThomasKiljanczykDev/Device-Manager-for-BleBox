@@ -1,4 +1,10 @@
-import { zWifiStatus, type ApSettings, type WifiStatus } from '@/shared';
+import {
+  zWifiScanResponse,
+  zWifiStatus,
+  type ApSettings,
+  type WifiNetwork,
+  type WifiStatus,
+} from '@/shared';
 import { commands } from '@/bindings';
 import { unwrap } from './companion';
 
@@ -22,4 +28,22 @@ export async function getWifiStatus(ip: string, _signal?: AbortSignal): Promise<
  */
 export async function setApSettings(ip: string, settings: ApSettings): Promise<void> {
   await unwrap(commands.deviceSetNetwork(ip, JSON.stringify(settings)));
+}
+
+/** `GET /api/wifi/scan` — nearby access points the device can see. */
+export async function scanWifiNetworks(ip: string): Promise<WifiNetwork[]> {
+  const json = await unwrap(commands.deviceWifiScan(ip));
+  return zWifiScanResponse.parse(JSON.parse(json)).ap;
+}
+
+/**
+ * `POST /api/wifi/connect` — joins the device to a network. `pwd` is `null`
+ * for an open network. The device may move off the current LAN as a result.
+ */
+export async function connectWifi(
+  ip: string,
+  ssid: string,
+  pwd: string | null,
+): Promise<void> {
+  await unwrap(commands.deviceWifiConnect(ip, JSON.stringify({ ssid, pwd })));
 }

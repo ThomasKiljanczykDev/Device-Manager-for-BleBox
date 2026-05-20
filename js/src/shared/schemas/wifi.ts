@@ -43,3 +43,30 @@ export const zDeviceSetRequest = z.object({
 });
 
 export type DeviceSetRequest = z.infer<typeof zDeviceSetRequest>;
+
+/**
+ * One nearby access point from `GET /api/wifi/scan`. `enc`: 0 = open,
+ * 3 = WPA2, 4 = WPA/WPA2; `rssi` is signal strength in dBm.
+ */
+export const zWifiScanEntry = z
+  .object({
+    ssid: z.string(),
+    rssi: z.number().int().optional(),
+    enc: z.number().int().optional(),
+  })
+  .passthrough();
+
+export type WifiNetwork = z.infer<typeof zWifiScanEntry>;
+
+/** `GET /api/wifi/scan` response. */
+export const zWifiScanResponse = z.object({
+  ap: z.array(zWifiScanEntry),
+});
+
+/** `POST /api/wifi/connect` response (`{ ssid, station_status }`). */
+export const zWifiConnectResult = z
+  .object({
+    ssid: z.string().optional(),
+    station_status: z.number().int().optional(),
+  })
+  .passthrough();

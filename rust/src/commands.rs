@@ -117,6 +117,21 @@ pub async fn device_actions_state(
     to_json(&body)
 }
 
+/// Writes the relay-state document via `POST /state`. `payload` is the
+/// JSON-encoded body — typically `{"relays":[{"relay":N,"state":0|1|2}]}`
+/// (`2` toggles). Used by the Device tab's on/off switch.
+#[tauri::command]
+#[specta::specta]
+pub async fn device_set_state(
+    ip: String,
+    payload: String,
+    config: State<'_, Config>,
+) -> Result<(), CommandError> {
+    guard_ip(&ip)?;
+    let body = parse_json(&payload)?;
+    http::device_post(&ip, "state", body, config.proxy_timeout_ms()).await
+}
+
 /// Persists one action via `POST /api/actions/set` (single-action upsert).
 /// `action` is the JSON-encoded action object.
 #[tauri::command]
@@ -169,6 +184,59 @@ pub async fn device_set_network(
         config.proxy_timeout_ms(),
     )
     .await
+}
+
+// --- firmware update -------------------------------------------------------
+
+/// Triggers the device's OTA firmware update via `POST /api/ota/update`. The
+/// spec accepts no body; the device pulls the new firmware from BleBox's
+/// cloud over its tunnel. Returns when the device has accepted the request
+/// (does not wait for the install).
+#[tauri::command]
+#[specta::specta]
+pub async fn device_ota_update(
+    ip: String,
+    config: State<'_, Config>,
+) -> Result<(), CommandError> {
+    guard_ip(&ip)?;
+    http::device_post(
+        &ip,
+        "api/ota/update",
+        serde_json::Value::Null,
+        config.proxy_timeout_ms(),
+    )
+    .await
+}
+
+// --- wifi client -----------------------------------------------------------
+// The device's connection to the home network (not its own AP).
+
+/// Lists nearby access points via `GET /api/wifi/scan` (`{ap: [...]}`).
+#[tauri::command]
+#[specta::specta]
+pub async fn device_wifi_scan(
+    ip: String,
+    config: State<'_, Config>,
+) -> Result<String, CommandError> {
+    guard_ip(&ip)?;
+    let body = http::device_get(&ip, "api/wifi/scan", config.proxy_timeout_ms()).await?;
+    to_json(&body)
+}
+
+/// Joins a network via `POST /api/wifi/connect`. `payload` is the JSON-encoded
+/// `{ ssid, pwd }` (`pwd` null/empty for an open network). Returns the device's
+/// `{ ssid, station_status }` response.
+#[tauri::command]
+#[specta::specta]
+pub async fn device_wifi_connect(
+    ip: String,
+    payload: String,
+    config: State<'_, Config>,
+) -> Result<String, CommandError> {
+    guard_ip(&ip)?;
+    let body = parse_json(&payload)?;
+    let resp = http::device_post_json(&ip, "api/wifi/connect", body, config.proxy_timeout_ms()).await?;
+    to_json(&resp)
 }
 
 // --- device settings -------------------------------------------------------

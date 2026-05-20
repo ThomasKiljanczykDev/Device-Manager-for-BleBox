@@ -16,7 +16,7 @@ import { configuredActions } from '@/features/actions/helpers';
 import { actionTypeLabel, triggerTypeLabel } from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 
-export const Route = createFileRoute('/devices/$deviceIp/json')({
+export const Route = createFileRoute('/devices/$deviceIp/actions/json')({
   component: JsonEditorDialog,
 });
 
@@ -67,8 +67,8 @@ function JsonEditorDialog() {
       parsed = JSON.parse(text);
     } catch (err) {
       setError(
-        t('jsonEditor.invalidJson', {
-          message: err instanceof Error ? err.message : t('jsonEditor.parseError'),
+        t('actionsJsonEditor.invalidJson', {
+          message: err instanceof Error ? err.message : t('actionsJsonEditor.parseError'),
         }),
       );
       return;
@@ -76,8 +76,8 @@ function JsonEditorDialog() {
     const result = actionsDocumentSchema.safeParse(parsed);
     if (!result.success) {
       setError(
-        t('jsonEditor.schemaError', {
-          message: result.error.issues[0]?.message ?? t('jsonEditor.schemaErrorFallback'),
+        t('actionsJsonEditor.schemaError', {
+          message: result.error.issues[0]?.message ?? t('actionsJsonEditor.schemaErrorFallback'),
         }),
       );
       return;
@@ -88,8 +88,8 @@ function JsonEditorDialog() {
 
   return (
     <RouteDialog
-      title={t('jsonEditor.title')}
-      description={t('jsonEditor.description')}
+      title={t('actionsJsonEditor.title')}
+      description={t('actionsJsonEditor.description')}
       onClose={close}
       className="max-w-6xl!"
       onEscapeKeyDown={(event) => {
@@ -128,7 +128,7 @@ function JsonEditorDialog() {
         <Button variant="outline" onClick={close}>
           {t('common.cancel')}
         </Button>
-        <Button onClick={apply}>{t('jsonEditor.apply')}</Button>
+        <Button onClick={apply}>{t('actionsJsonEditor.apply')}</Button>
       </div>
     </RouteDialog>
   );
