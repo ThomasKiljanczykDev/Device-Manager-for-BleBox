@@ -33,7 +33,6 @@
     "emptyBody": "Scan the local network for BleBox switches, or add one manually by IP."
   },
   "deviceDetail": {
-    "editJson": "Edit raw JSON",
     "online": "Online",
     "offline": "Offline",
     "unknownType": "unknown",
@@ -114,7 +113,7 @@
     "submit": "Probe & add",
     "companionError": "Something went wrong while probing the device."
   },
-  "jsonEditor": {
+  "actionsJsonEditor": {
     "title": "Edit actions JSON",
     "description": "Schema-validated editor for the device's configured actions. Removing an entry clears its slot. Applying updates the in-memory draft; use Save on the device page to persist.",
     "apply": "Apply changes",
@@ -124,6 +123,7 @@
     "parseError": "parse error"
   },
   "actionsPanel": {
+    "editJson": "Edit raw JSON",
     "inputTitle": "Input {{n}}",
     "addAction": "Add action",
     "slotsFull": "All 30 action slots are in use",

@@ -114,11 +114,6 @@ function DeviceDetail() {
             </span>
           </div>
         </div>
-        <Button asChild variant="outline" size="sm">
-          <Link to="/devices/$deviceIp/json" params={{ deviceIp }}>
-            <Braces /> {t('deviceDetail.editJson')}
-          </Link>
-        </Button>
         {dirty ? (
           <Button
             variant="ghost"
@@ -166,12 +161,19 @@ function DeviceDetail() {
             </div>
           ) : (
             <>
-              <div className="mb-4 flex gap-4 text-xs text-muted-foreground">
-                <span>{t('deviceDetail.inputs', { count: inputCount })}</span>
-                <Separator orientation="vertical" className="h-4" />
-                <span>{t('deviceDetail.relays', { count: relayCount })}</span>
-                <Separator orientation="vertical" className="h-4" />
-                <span>{t('deviceDetail.slots', { count: itemsLimit })}</span>
+              <div className="mb-4 flex flex-wrap items-center gap-4">
+                <div className="flex flex-wrap items-center gap-4 text-xs text-muted-foreground">
+                  <span>{t('deviceDetail.inputs', { count: inputCount })}</span>
+                  <Separator orientation="vertical" className="h-4" />
+                  <span>{t('deviceDetail.relays', { count: relayCount })}</span>
+                  <Separator orientation="vertical" className="h-4" />
+                  <span>{t('deviceDetail.slots', { count: itemsLimit })}</span>
+                </div>
+                <Button asChild variant="outline" size="sm" className="ml-auto">
+                  <Link to="/devices/$deviceIp/actions/json" params={{ deviceIp }}>
+                    <Braces /> {t('actionsPanel.editJson')}
+                  </Link>
+                </Button>
               </div>
               <ActionsPanel deviceIp={deviceIp} inputCount={inputCount} />
             </>
@@ -180,8 +182,8 @@ function DeviceDetail() {
 
         <TabsContent value="connection">
           <div className="flex flex-col gap-4">
-            <ServiceConnectionPanel deviceIp={deviceIp} />
             <RemoteAccessPanel deviceIp={deviceIp} />
+            <ServiceConnectionPanel deviceIp={deviceIp} />
           </div>
         </TabsContent>
       </Tabs>

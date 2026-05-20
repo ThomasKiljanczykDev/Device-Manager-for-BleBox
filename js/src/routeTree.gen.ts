@@ -14,7 +14,7 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as DevicesIndexRouteImport } from './routes/devices/index'
 import { Route as DevicesAddRouteImport } from './routes/devices/add'
 import { Route as DevicesDeviceIpRouteImport } from './routes/devices/$deviceIp'
-import { Route as DevicesDeviceIpJsonRouteImport } from './routes/devices/$deviceIp.json'
+import { Route as DevicesDeviceIpActionsJsonRouteImport } from './routes/devices/$deviceIp.actions.json'
 import { Route as DevicesDeviceIpActionsInputIdNewRouteImport } from './routes/devices/$deviceIp.actions.$inputId.new'
 import { Route as DevicesDeviceIpActionsInputIdActionIdEditRouteImport } from './routes/devices/$deviceIp.actions.$inputId.$actionId.edit'
 
@@ -43,11 +43,12 @@ const DevicesDeviceIpRoute = DevicesDeviceIpRouteImport.update({
   path: '/$deviceIp',
   getParentRoute: () => DevicesRouteRoute,
 } as any)
-const DevicesDeviceIpJsonRoute = DevicesDeviceIpJsonRouteImport.update({
-  id: '/json',
-  path: '/json',
-  getParentRoute: () => DevicesDeviceIpRoute,
-} as any)
+const DevicesDeviceIpActionsJsonRoute =
+  DevicesDeviceIpActionsJsonRouteImport.update({
+    id: '/actions/json',
+    path: '/actions/json',
+    getParentRoute: () => DevicesDeviceIpRoute,
+  } as any)
 const DevicesDeviceIpActionsInputIdNewRoute =
   DevicesDeviceIpActionsInputIdNewRouteImport.update({
     id: '/actions/$inputId/new',
@@ -67,7 +68,7 @@ export interface FileRoutesByFullPath {
   '/devices/$deviceIp': typeof DevicesDeviceIpRouteWithChildren
   '/devices/add': typeof DevicesAddRoute
   '/devices/': typeof DevicesIndexRoute
-  '/devices/$deviceIp/json': typeof DevicesDeviceIpJsonRoute
+  '/devices/$deviceIp/actions/json': typeof DevicesDeviceIpActionsJsonRoute
   '/devices/$deviceIp/actions/$inputId/new': typeof DevicesDeviceIpActionsInputIdNewRoute
   '/devices/$deviceIp/actions/$inputId/$actionId/edit': typeof DevicesDeviceIpActionsInputIdActionIdEditRoute
 }
@@ -76,7 +77,7 @@ export interface FileRoutesByTo {
   '/devices/$deviceIp': typeof DevicesDeviceIpRouteWithChildren
   '/devices/add': typeof DevicesAddRoute
   '/devices': typeof DevicesIndexRoute
-  '/devices/$deviceIp/json': typeof DevicesDeviceIpJsonRoute
+  '/devices/$deviceIp/actions/json': typeof DevicesDeviceIpActionsJsonRoute
   '/devices/$deviceIp/actions/$inputId/new': typeof DevicesDeviceIpActionsInputIdNewRoute
   '/devices/$deviceIp/actions/$inputId/$actionId/edit': typeof DevicesDeviceIpActionsInputIdActionIdEditRoute
 }
@@ -87,7 +88,7 @@ export interface FileRoutesById {
   '/devices/$deviceIp': typeof DevicesDeviceIpRouteWithChildren
   '/devices/add': typeof DevicesAddRoute
   '/devices/': typeof DevicesIndexRoute
-  '/devices/$deviceIp/json': typeof DevicesDeviceIpJsonRoute
+  '/devices/$deviceIp/actions/json': typeof DevicesDeviceIpActionsJsonRoute
   '/devices/$deviceIp/actions/$inputId/new': typeof DevicesDeviceIpActionsInputIdNewRoute
   '/devices/$deviceIp/actions/$inputId/$actionId/edit': typeof DevicesDeviceIpActionsInputIdActionIdEditRoute
 }
@@ -99,7 +100,7 @@ export interface FileRouteTypes {
     | '/devices/$deviceIp'
     | '/devices/add'
     | '/devices/'
-    | '/devices/$deviceIp/json'
+    | '/devices/$deviceIp/actions/json'
     | '/devices/$deviceIp/actions/$inputId/new'
     | '/devices/$deviceIp/actions/$inputId/$actionId/edit'
   fileRoutesByTo: FileRoutesByTo
@@ -108,7 +109,7 @@ export interface FileRouteTypes {
     | '/devices/$deviceIp'
     | '/devices/add'
     | '/devices'
-    | '/devices/$deviceIp/json'
+    | '/devices/$deviceIp/actions/json'
     | '/devices/$deviceIp/actions/$inputId/new'
     | '/devices/$deviceIp/actions/$inputId/$actionId/edit'
   id:
@@ -118,7 +119,7 @@ export interface FileRouteTypes {
     | '/devices/$deviceIp'
     | '/devices/add'
     | '/devices/'
-    | '/devices/$deviceIp/json'
+    | '/devices/$deviceIp/actions/json'
     | '/devices/$deviceIp/actions/$inputId/new'
     | '/devices/$deviceIp/actions/$inputId/$actionId/edit'
   fileRoutesById: FileRoutesById
@@ -165,11 +166,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevicesDeviceIpRouteImport
       parentRoute: typeof DevicesRouteRoute
     }
-    '/devices/$deviceIp/json': {
-      id: '/devices/$deviceIp/json'
-      path: '/json'
-      fullPath: '/devices/$deviceIp/json'
-      preLoaderRoute: typeof DevicesDeviceIpJsonRouteImport
+    '/devices/$deviceIp/actions/json': {
+      id: '/devices/$deviceIp/actions/json'
+      path: '/actions/json'
+      fullPath: '/devices/$deviceIp/actions/json'
+      preLoaderRoute: typeof DevicesDeviceIpActionsJsonRouteImport
       parentRoute: typeof DevicesDeviceIpRoute
     }
     '/devices/$deviceIp/actions/$inputId/new': {
@@ -190,13 +191,13 @@ declare module '@tanstack/react-router' {
 }
 
 interface DevicesDeviceIpRouteChildren {
-  DevicesDeviceIpJsonRoute: typeof DevicesDeviceIpJsonRoute
+  DevicesDeviceIpActionsJsonRoute: typeof DevicesDeviceIpActionsJsonRoute
   DevicesDeviceIpActionsInputIdNewRoute: typeof DevicesDeviceIpActionsInputIdNewRoute
   DevicesDeviceIpActionsInputIdActionIdEditRoute: typeof DevicesDeviceIpActionsInputIdActionIdEditRoute
 }
 
 const DevicesDeviceIpRouteChildren: DevicesDeviceIpRouteChildren = {
-  DevicesDeviceIpJsonRoute: DevicesDeviceIpJsonRoute,
+  DevicesDeviceIpActionsJsonRoute: DevicesDeviceIpActionsJsonRoute,
   DevicesDeviceIpActionsInputIdNewRoute: DevicesDeviceIpActionsInputIdNewRoute,
   DevicesDeviceIpActionsInputIdActionIdEditRoute:
     DevicesDeviceIpActionsInputIdActionIdEditRoute,
