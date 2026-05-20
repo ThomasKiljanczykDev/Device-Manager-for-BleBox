@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
+import { toast } from 'sonner';
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +25,20 @@ export function DeviceDetailsPanel({ deviceIp }: DeviceDetailsPanelProps) {
 
   const availableFv = query.data?.availableFv ?? null;
   const updateAvailable = !!availableFv;
+
+  // Re-read /info, then report the outcome of the firmware check via a toast.
+  async function checkForUpdates() {
+    const result = await query.refetch();
+    if (result.isError || !result.data) {
+      toast.error(t('deviceDetails.checkFailedToast'));
+      return;
+    }
+    if (result.data.availableFv) {
+      toast.info(t('deviceDetails.updateFoundToast', { version: result.data.availableFv }));
+    } else {
+      toast.success(t('deviceDetails.upToDateToast'));
+    }
+  }
 
   return (
     <Card>
@@ -68,7 +83,7 @@ export function DeviceDetailsPanel({ deviceIp }: DeviceDetailsPanelProps) {
                       className="size-6"
                       aria-label={t('deviceDetails.checkForUpdates')}
                       disabled={query.isFetching}
-                      onClick={() => void query.refetch()}
+                      onClick={() => void checkForUpdates()}
                     >
                       {query.isFetching ? (
                         <Loader2 className="size-3 animate-spin" />
