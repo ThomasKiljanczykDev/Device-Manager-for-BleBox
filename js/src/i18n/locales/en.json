@@ -76,7 +76,8 @@
     "activePower": "Active power",
     "consumption": "Consumption",
     "watts": "{{value}} W",
-    "kwh": "{{value}} kWh"
+    "kwh": "{{value}} kWh",
+    "refresh": "Refresh"
   },
   "serviceConnection": {
     "title": "Service Connection",

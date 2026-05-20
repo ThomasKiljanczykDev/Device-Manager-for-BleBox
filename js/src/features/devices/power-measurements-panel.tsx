@@ -1,9 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
-import { AlertCircle, Loader2 } from 'lucide-react';
+import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
+import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getStateExtended } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
+
+/** Auto-refresh cadence for the live power readings, in milliseconds. */
+const POWER_REFRESH_INTERVAL_MS = 15_000;
 
 interface PowerMeasurementsPanelProps {
   deviceIp: string;
@@ -22,6 +26,11 @@ export function PowerMeasurementsPanel({ deviceIp }: PowerMeasurementsPanelProps
   const query = useQuery({
     queryKey: queryKeys.deviceState(deviceIp),
     queryFn: () => getStateExtended(deviceIp),
+    // Auto-refresh while the tab is mounted; pauses when the window is
+    // backgrounded. The query key is shared with `DeviceStatePanel` so the
+    // relay state stays current alongside the power readings.
+    refetchInterval: POWER_REFRESH_INTERVAL_MS,
+    refetchIntervalInBackground: false,
   });
 
   const activePower = query.data?.sensors?.find((s) => s.type === 'activePower')?.value;
@@ -34,9 +43,25 @@ export function PowerMeasurementsPanel({ deviceIp }: PowerMeasurementsPanelProps
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="text-sm">{t('devicePanel.powerTitle')}</CardTitle>
-        <CardDescription>{t('devicePanel.powerDescription')}</CardDescription>
+      <CardHeader className="flex flex-row items-start justify-between gap-2 space-y-0">
+        <div className="space-y-1.5">
+          <CardTitle className="text-sm">{t('devicePanel.powerTitle')}</CardTitle>
+          <CardDescription>{t('devicePanel.powerDescription')}</CardDescription>
+        </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          className="size-7"
+          aria-label={t('devicePanel.refresh')}
+          disabled={query.isFetching}
+          onClick={() => void query.refetch()}
+        >
+          {query.isFetching ? (
+            <Loader2 className="size-4 animate-spin" />
+          ) : (
+            <RefreshCw className="size-4" />
+          )}
+        </Button>
       </CardHeader>
       <CardContent>
         {query.isError ? (
