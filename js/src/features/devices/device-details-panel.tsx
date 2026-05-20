@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { deviceInfoQueryOptions } from '@/features/devices/queries';
 import { FirmwareUpdateDialog } from './firmware-update-dialog';
 
@@ -59,20 +60,25 @@ export function DeviceDetailsPanel({ deviceIp }: DeviceDetailsPanelProps) {
               <dt className="text-muted-foreground">{t('deviceDetails.firmware')}</dt>
               <dd className="flex flex-wrap items-center gap-2 font-mono">
                 <span>{query.data.fv ?? '—'}</span>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  className="size-6"
-                  aria-label={t('deviceDetails.checkForUpdates')}
-                  disabled={query.isFetching}
-                  onClick={() => void query.refetch()}
-                >
-                  {query.isFetching ? (
-                    <Loader2 className="size-3 animate-spin" />
-                  ) : (
-                    <RefreshCw className="size-3" />
-                  )}
-                </Button>
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="size-6"
+                      aria-label={t('deviceDetails.checkForUpdates')}
+                      disabled={query.isFetching}
+                      onClick={() => void query.refetch()}
+                    >
+                      {query.isFetching ? (
+                        <Loader2 className="size-3 animate-spin" />
+                      ) : (
+                        <RefreshCw className="size-3" />
+                      )}
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent>{t('deviceDetails.checkForUpdates')}</TooltipContent>
+                </Tooltip>
                 {updateAvailable ? (
                   <span className="font-sans text-xs text-amber-500">
                     {t('deviceDetails.updateAvailable', { version: availableFv })}

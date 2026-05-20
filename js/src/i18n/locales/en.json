@@ -77,7 +77,7 @@
     "consumption": "Consumption",
     "watts": "{{value}} W",
     "kwh": "{{value}} kWh",
-    "refresh": "Refresh"
+    "refresh": "Refresh readings"
   },
   "deviceDetails": {
     "title": "Device details",

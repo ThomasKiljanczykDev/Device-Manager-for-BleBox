@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { AlertCircle, Loader2, RefreshCw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { getStateExtended } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
 
@@ -48,20 +49,25 @@ export function PowerMeasurementsPanel({ deviceIp }: PowerMeasurementsPanelProps
           <CardTitle className="text-sm">{t('devicePanel.powerTitle')}</CardTitle>
           <CardDescription>{t('devicePanel.powerDescription')}</CardDescription>
         </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="size-7"
-          aria-label={t('devicePanel.refresh')}
-          disabled={query.isFetching}
-          onClick={() => void query.refetch()}
-        >
-          {query.isFetching ? (
-            <Loader2 className="size-4 animate-spin" />
-          ) : (
-            <RefreshCw className="size-4" />
-          )}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="size-7"
+              aria-label={t('devicePanel.refresh')}
+              disabled={query.isFetching}
+              onClick={() => void query.refetch()}
+            >
+              {query.isFetching ? (
+                <Loader2 className="size-4 animate-spin" />
+              ) : (
+                <RefreshCw className="size-4" />
+              )}
+            </Button>
+          </TooltipTrigger>
+          <TooltipContent>{t('devicePanel.refresh')}</TooltipContent>
+        </Tooltip>
       </CardHeader>
       <CardContent>
         {query.isError ? (
