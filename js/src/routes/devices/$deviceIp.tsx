@@ -142,9 +142,7 @@ function DeviceDetail() {
           <div className="grid gap-4 md:grid-cols-2 md:items-start">
             <DeviceStatePanel deviceIp={deviceIp} />
             <PowerMeasurementsPanel deviceIp={deviceIp} />
-            <div className="md:col-span-2">
-              <DeviceSettingsPanel deviceIp={deviceIp} />
-            </div>
+            <DeviceSettingsPanel deviceIp={deviceIp} />
           </div>
         </TabsContent>
 
