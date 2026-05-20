@@ -138,31 +138,29 @@ function WifiConnectForm({ deviceIp, onClose }: { deviceIp: string; onClose: () 
   return (
     <>
       <DialogHeader>
-        <div className="flex items-start justify-between gap-2">
-          <div className="space-y-2">
-            <DialogTitle>{t('wifiDetails.dialog.title')}</DialogTitle>
-            <DialogDescription>{t('wifiDetails.dialog.listDescription')}</DialogDescription>
-          </div>
+        <DialogTitle>{t('wifiDetails.dialog.title')}</DialogTitle>
+        <DialogDescription className="flex items-center gap-2">
+          {t('wifiDetails.dialog.listDescription')}
           <Tooltip>
             <TooltipTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="size-7 shrink-0"
+                className="size-6 shrink-0"
                 aria-label={t('wifiDetails.dialog.rescan')}
                 disabled={scan.isFetching}
                 onClick={() => void scan.refetch()}
               >
                 {scan.isFetching ? (
-                  <Loader2 className="size-4 animate-spin" />
+                  <Loader2 className="size-3.5 animate-spin" />
                 ) : (
-                  <RefreshCw className="size-4" />
+                  <RefreshCw className="size-3.5" />
                 )}
               </Button>
             </TooltipTrigger>
             <TooltipContent>{t('wifiDetails.dialog.rescan')}</TooltipContent>
           </Tooltip>
-        </div>
+        </DialogDescription>
       </DialogHeader>
 
       <div className="max-h-80 overflow-y-auto">
