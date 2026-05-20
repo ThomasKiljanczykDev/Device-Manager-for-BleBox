@@ -13,6 +13,7 @@ import { getActionsState, getStateExtended, saveActions } from '@/lib/blebox';
 import { queryKeys } from '@/lib/query';
 import { isActionsDraftDirty, useActionsDraftStore } from '@/stores/actions-draft';
 import { ActionsPanel } from '@/features/actions/actions-panel';
+import { DeviceSettingsPanel } from '@/features/devices/device-settings-panel';
 import { DeviceStatePanel } from '@/features/devices/device-state-panel';
 import { PowerMeasurementsPanel } from '@/features/devices/power-measurements-panel';
 import { RenameDialog } from '@/features/devices/rename-dialog';
@@ -138,9 +139,10 @@ function DeviceDetail() {
         </TabsList>
 
         <TabsContent value="device">
-          <div className="grid gap-4 md:grid-cols-2 md:items-start">
+          <div className="grid gap-4 md:grid-cols-2 md:items-start lg:grid-cols-3">
             <DeviceStatePanel deviceIp={deviceIp} />
             <PowerMeasurementsPanel deviceIp={deviceIp} />
+            <DeviceSettingsPanel deviceIp={deviceIp} />
           </div>
         </TabsContent>
 

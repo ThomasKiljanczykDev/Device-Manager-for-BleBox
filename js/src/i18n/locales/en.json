@@ -105,6 +105,20 @@
     "toastSaved": "Remote access updated",
     "toastError": "Failed to update remote access"
   },
+  "deviceSettings": {
+    "title": "Device settings",
+    "description": "Per-device configuration toggles stored in the device's settings document.",
+    "statusLedLabel": "Status LED",
+    "buttonsBacklightLabel": "Buttons backlight",
+    "powerMeasuringLabel": "Power measuring",
+    "save": "Save",
+    "discard": "Discard",
+    "loading": "Reading the device settings…",
+    "loadError": "Could not read the device settings.",
+    "retry": "Retry",
+    "toastSaved": "Device settings updated",
+    "toastError": "Failed to update the device settings"
+  },
   "manualAdd": {
     "title": "Add a device manually",
     "description": "Enter the LAN IP address of a BleBox device.",

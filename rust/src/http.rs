@@ -313,4 +313,69 @@ mod live_tests {
             panic!("{msg}");
         }
     }
+
+    /// Flip `powerMeasuring.enabled` via a *nested* partial body and assert
+    /// the sibling sub-fields (`safetyValue`, `factoryCalibration`) are
+    /// preserved byte-identical. Proves the assumption the DeviceSettings
+    /// panel makes when it sends `{powerMeasuring:{enabled:N}}`.
+    #[tokio::test]
+    #[ignore = "requires the live BleBox device on the LAN"]
+    async fn power_measuring_nested_partial_preserves() {
+        let before = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read settings");
+        let pm_before = before["settings"]["powerMeasuring"].clone();
+        let original = pm_before["enabled"]
+            .as_i64()
+            .expect("powerMeasuring.enabled is an integer");
+        let flipped = 1 - original;
+
+        let restore = serde_json::json!({
+            "settings": { "powerMeasuring": { "enabled": original } }
+        });
+
+        let result: Result<(), String> = async {
+            device_post(
+                LIVE_IP,
+                "api/settings/set",
+                serde_json::json!({
+                    "settings": { "powerMeasuring": { "enabled": flipped } }
+                }),
+                6_000,
+            )
+            .await
+            .map_err(|e| format!("flip POST: {e}"))?;
+
+            let mid = device_get(LIVE_IP, "api/settings/state", 6_000)
+                .await
+                .map_err(|e| format!("re-read: {e}"))?;
+            let pm_mid = &mid["settings"]["powerMeasuring"];
+            if pm_mid["enabled"].as_i64() != Some(flipped) {
+                return Err("flip did not take".into());
+            }
+            for key in ["safetyValue", "factoryCalibration"] {
+                if pm_mid[key] != pm_before[key] {
+                    return Err(format!(
+                        "powerMeasuring.{key} changed across a nested partial update"
+                    ));
+                }
+            }
+            Ok(())
+        }
+        .await;
+
+        let _ = device_post(LIVE_IP, "api/settings/set", restore, 6_000).await;
+        let after = device_get(LIVE_IP, "api/settings/state", 6_000)
+            .await
+            .expect("read after restore");
+        assert_eq!(
+            after["settings"]["powerMeasuring"]["enabled"].as_i64(),
+            Some(original),
+            "powerMeasuring.enabled was not restored",
+        );
+
+        if let Err(msg) = result {
+            panic!("{msg}");
+        }
+    }
 }
