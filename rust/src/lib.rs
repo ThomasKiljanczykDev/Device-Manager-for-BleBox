@@ -17,24 +17,25 @@ use discovery::DiscoveryService;
 
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
 pub fn run() {
-    let builder = tauri_specta::Builder::<tauri::Wry>::new().commands(tauri_specta::collect_commands![
-        commands::start_discovery,
-        commands::stop_discovery,
-        commands::get_discovered_devices,
-        commands::probe_device,
-        commands::device_info,
-        commands::device_state_extended,
-        commands::device_actions_state,
-        commands::device_save_action,
-        commands::device_set_state,
-        commands::device_ota_update,
-        commands::device_wifi_scan,
-        commands::device_wifi_connect,
-        commands::device_network,
-        commands::device_set_network,
-        commands::device_settings_state,
-        commands::device_settings_set,
-    ]);
+    let builder =
+        tauri_specta::Builder::<tauri::Wry>::new().commands(tauri_specta::collect_commands![
+            commands::start_discovery,
+            commands::stop_discovery,
+            commands::get_discovered_devices,
+            commands::probe_device,
+            commands::device_info,
+            commands::device_state_extended,
+            commands::device_actions_state,
+            commands::device_save_action,
+            commands::device_set_state,
+            commands::device_ota_update,
+            commands::device_wifi_scan,
+            commands::device_wifi_connect,
+            commands::device_network,
+            commands::device_set_network,
+            commands::device_settings_state,
+            commands::device_settings_set,
+        ]);
 
     // Regenerate the TypeScript bindings on every debug run so the frontend
     // contract never drifts from the Rust command signatures.

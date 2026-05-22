@@ -157,10 +157,7 @@ pub async fn device_save_action(
 
 #[tauri::command]
 #[specta::specta]
-pub async fn device_network(
-    ip: String,
-    config: State<'_, Config>,
-) -> Result<String, CommandError> {
+pub async fn device_network(ip: String, config: State<'_, Config>) -> Result<String, CommandError> {
     guard_ip(&ip)?;
     let body = http::device_get(&ip, "api/device/network", config.proxy_timeout_ms()).await?;
     to_json(&body)
@@ -194,10 +191,7 @@ pub async fn device_set_network(
 /// (does not wait for the install).
 #[tauri::command]
 #[specta::specta]
-pub async fn device_ota_update(
-    ip: String,
-    config: State<'_, Config>,
-) -> Result<(), CommandError> {
+pub async fn device_ota_update(ip: String, config: State<'_, Config>) -> Result<(), CommandError> {
     guard_ip(&ip)?;
     http::device_post(
         &ip,
@@ -235,7 +229,8 @@ pub async fn device_wifi_connect(
 ) -> Result<String, CommandError> {
     guard_ip(&ip)?;
     let body = parse_json(&payload)?;
-    let resp = http::device_post_json(&ip, "api/wifi/connect", body, config.proxy_timeout_ms()).await?;
+    let resp =
+        http::device_post_json(&ip, "api/wifi/connect", body, config.proxy_timeout_ms()).await?;
     to_json(&resp)
 }
 
