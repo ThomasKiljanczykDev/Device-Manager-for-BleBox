@@ -192,9 +192,9 @@ impl DiscoveryService {
                         }
                     }
                 }
-                Ok(Ok(_)) => {}        // other mDNS events — ignored
-                Ok(Err(_)) => break,   // browse channel closed
-                Err(_) => continue,    // poll timeout — re-check the epoch
+                Ok(Ok(_)) => {}      // other mDNS events — ignored
+                Ok(Err(_)) => break, // browse channel closed
+                Err(_) => continue,  // poll timeout — re-check the epoch
             }
         }
         let _ = daemon.shutdown();

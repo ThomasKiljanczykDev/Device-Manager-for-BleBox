@@ -234,7 +234,9 @@ mod live_tests {
                 "powerMeasuring",
             ] {
                 if mid["settings"][key] != before["settings"][key] {
-                    return Err(format!("sibling setting `{key}` changed across a partial update"));
+                    return Err(format!(
+                        "sibling setting `{key}` changed across a partial update"
+                    ));
                 }
             }
             Ok(())
