@@ -9,23 +9,23 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as DevicesRouteRouteImport } from './routes/devices/route'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as DevicesRouteRouteImport } from './routes/devices/route'
 import { Route as DevicesIndexRouteImport } from './routes/devices/index'
-import { Route as DevicesAddRouteImport } from './routes/devices/add'
 import { Route as DevicesDeviceIpRouteImport } from './routes/devices/$deviceIp'
+import { Route as DevicesAddRouteImport } from './routes/devices/add'
 import { Route as DevicesDeviceIpActionsJsonRouteImport } from './routes/devices/$deviceIp.actions.json'
 import { Route as DevicesDeviceIpActionsInputIdNewRouteImport } from './routes/devices/$deviceIp.actions.$inputId.new'
 import { Route as DevicesDeviceIpActionsInputIdActionIdEditRouteImport } from './routes/devices/$deviceIp.actions.$inputId.$actionId.edit'
 
-const DevicesRouteRoute = DevicesRouteRouteImport.update({
-  id: '/devices',
-  path: '/devices',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const IndexRoute = IndexRouteImport.update({
   id: '/',
   path: '/',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DevicesRouteRoute = DevicesRouteRouteImport.update({
+  id: '/devices',
+  path: '/devices',
   getParentRoute: () => rootRouteImport,
 } as any)
 const DevicesIndexRoute = DevicesIndexRouteImport.update({
@@ -33,14 +33,14 @@ const DevicesIndexRoute = DevicesIndexRouteImport.update({
   path: '/',
   getParentRoute: () => DevicesRouteRoute,
 } as any)
-const DevicesAddRoute = DevicesAddRouteImport.update({
-  id: '/add',
-  path: '/add',
-  getParentRoute: () => DevicesRouteRoute,
-} as any)
 const DevicesDeviceIpRoute = DevicesDeviceIpRouteImport.update({
   id: '/$deviceIp',
   path: '/$deviceIp',
+  getParentRoute: () => DevicesRouteRoute,
+} as any)
+const DevicesAddRoute = DevicesAddRouteImport.update({
+  id: '/add',
+  path: '/add',
   getParentRoute: () => DevicesRouteRoute,
 } as any)
 const DevicesDeviceIpActionsJsonRoute =
@@ -131,18 +131,18 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/devices': {
-      id: '/devices'
-      path: '/devices'
-      fullPath: '/devices'
-      preLoaderRoute: typeof DevicesRouteRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/': {
       id: '/'
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof IndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/devices': {
+      id: '/devices'
+      path: '/devices'
+      fullPath: '/devices'
+      preLoaderRoute: typeof DevicesRouteRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/devices/': {
@@ -152,18 +152,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DevicesIndexRouteImport
       parentRoute: typeof DevicesRouteRoute
     }
-    '/devices/add': {
-      id: '/devices/add'
-      path: '/add'
-      fullPath: '/devices/add'
-      preLoaderRoute: typeof DevicesAddRouteImport
-      parentRoute: typeof DevicesRouteRoute
-    }
     '/devices/$deviceIp': {
       id: '/devices/$deviceIp'
       path: '/$deviceIp'
       fullPath: '/devices/$deviceIp'
       preLoaderRoute: typeof DevicesDeviceIpRouteImport
+      parentRoute: typeof DevicesRouteRoute
+    }
+    '/devices/add': {
+      id: '/devices/add'
+      path: '/add'
+      fullPath: '/devices/add'
+      preLoaderRoute: typeof DevicesAddRouteImport
       parentRoute: typeof DevicesRouteRoute
     }
     '/devices/$deviceIp/actions/json': {

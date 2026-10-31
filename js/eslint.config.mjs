@@ -1,19 +1,12 @@
 import js from '@eslint/js';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
-import react from 'eslint-plugin-react';
+import eslintReact from '@eslint-react/eslint-plugin';
 import reactHooks from 'eslint-plugin-react-hooks';
 import reactRefresh from 'eslint-plugin-react-refresh';
 import prettier from 'eslint-config-prettier';
 
 export default tseslint.config(
-  {
-    settings: {
-      react: {
-        version: 'detect',
-      },
-    },
-  },
   {
     ignores: [
       '**/dist/**',
@@ -36,11 +29,7 @@ export default tseslint.config(
     },
   },
   {
-    ...react.configs.flat.recommended,
-    files: ['src/**/*.{ts,tsx}'],
-  },
-  {
-    ...react.configs.flat['jsx-runtime'],
+    ...eslintReact.configs['recommended-typescript'],
     files: ['src/**/*.{ts,tsx}'],
   },
   {
@@ -57,8 +46,6 @@ export default tseslint.config(
     },
     rules: {
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
-      // TypeScript already enforces prop types — `react/prop-types` is redundant.
-      'react/prop-types': 'off',
     },
   },
   {

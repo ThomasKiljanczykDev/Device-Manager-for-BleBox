@@ -8,7 +8,9 @@ devices over the local network. macOS, single user, v1.
 
 - A Rust toolchain — install via [rustup](https://rustup.rs)
 - The Tauri CLI: `cargo install tauri-cli --version "^2.0" --locked`
-- Node.js 24 LTS, with Corepack enabled (`corepack enable`)
+- Node.js 26 LTS
+- [pnpm](https://pnpm.io/installation) 12, matching the version pinned in the
+  root `package.json`
 - BleBox devices reachable on the LAN
 
 ## Setup & running
