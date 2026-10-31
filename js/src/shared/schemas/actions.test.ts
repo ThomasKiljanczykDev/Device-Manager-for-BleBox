@@ -81,12 +81,8 @@ describe('actionSchema', () => {
 
   it('rejects invalid actions', () => {
     expect(actionSchema.safeParse({ id: 0, name: 'x' }).success).toBe(false);
-    expect(
-      actionSchema.safeParse({ ...sample.actions[0], input: -1 }).success,
-    ).toBe(false);
-    expect(
-      actionSchema.safeParse({ ...sample.actions[0], param: 123 }).success,
-    ).toBe(false);
+    expect(actionSchema.safeParse({ ...sample.actions[0], input: -1 }).success).toBe(false);
+    expect(actionSchema.safeParse({ ...sample.actions[0], param: 123 }).success).toBe(false);
   });
 });
 
@@ -119,9 +115,9 @@ describe('set / document payloads', () => {
   });
 
   it('actionsDocumentSchema accepts the full editable document', () => {
-    expect(
-      actionsDocumentSchema.safeParse({ actions: sample.actions.map((a) => a) }).success,
-    ).toBe(true);
+    expect(actionsDocumentSchema.safeParse({ actions: sample.actions.map((a) => a) }).success).toBe(
+      true,
+    );
   });
 });
 

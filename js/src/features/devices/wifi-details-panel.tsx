@@ -25,8 +25,7 @@ const STATION_STATUS_KEYS = {
 
 function stationStatusKey(status: number | undefined) {
   return (
-    STATION_STATUS_KEYS[status as keyof typeof STATION_STATUS_KEYS] ??
-    'wifiDetails.status.unknown'
+    STATION_STATUS_KEYS[status as keyof typeof STATION_STATUS_KEYS] ?? 'wifiDetails.status.unknown'
   );
 }
 

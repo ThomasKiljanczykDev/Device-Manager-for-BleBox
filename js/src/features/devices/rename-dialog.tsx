@@ -44,11 +44,7 @@ export function RenameDialog({ deviceIp, device, open, onOpenChange }: RenameDia
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         {device ? (
-          <RenameForm
-            deviceIp={deviceIp}
-            device={device}
-            onClose={() => onOpenChange(false)}
-          />
+          <RenameForm deviceIp={deviceIp} device={device} onClose={() => onOpenChange(false)} />
         ) : null}
       </DialogContent>
     </Dialog>

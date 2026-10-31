@@ -127,6 +127,8 @@ export const useActionsDraftStore = create<ActionsDraftState>((set) => ({
 }));
 
 /** Whether the working copy diverges from the device snapshot. */
-export function isActionsDraftDirty(state: Pick<ActionsDraftState, 'working' | 'snapshot'>): boolean {
+export function isActionsDraftDirty(
+  state: Pick<ActionsDraftState, 'working' | 'snapshot'>,
+): boolean {
   return JSON.stringify(state.working) !== JSON.stringify(state.snapshot);
 }

@@ -60,17 +60,16 @@ export type NumericRange = z.infer<typeof numericRangeSchema>;
  * structure (different keys per `name`), so it is modelled permissively and
  * interpreted by the helper functions below.
  */
-export const fieldPreferenceSchema = z
-  .looseObject({
-    name: z.string(),
-    values: z.array(z.number()).optional(),
-    placeholders: z.array(z.string()).optional(),
-    dependsOn: z.string().optional(),
-    dependsOnValues: z.array(z.number()).optional(),
-    minValue: z.number().optional(),
-    maxValue: z.number().optional(),
-    constraints: z.array(z.record(z.string(), z.unknown())).optional(),
-  });
+export const fieldPreferenceSchema = z.looseObject({
+  name: z.string(),
+  values: z.array(z.number()).optional(),
+  placeholders: z.array(z.string()).optional(),
+  dependsOn: z.string().optional(),
+  dependsOnValues: z.array(z.number()).optional(),
+  minValue: z.number().optional(),
+  maxValue: z.number().optional(),
+  constraints: z.array(z.record(z.string(), z.unknown())).optional(),
+});
 
 export type FieldPreference = z.infer<typeof fieldPreferenceSchema>;
 

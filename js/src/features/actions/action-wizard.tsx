@@ -96,7 +96,13 @@ function initialValues(existing: Action | undefined): WizardValues {
 const isHttpUrl = (value: string) => /^https?:\/\/.+/i.test(value.trim());
 
 /** Three-step wizard for creating/editing an action on an input. */
-export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }: ActionWizardProps) {
+export function ActionWizard({
+  deviceIp,
+  inputId,
+  actionId,
+  existing,
+  onClose,
+}: ActionWizardProps) {
   const { t } = useTranslation();
   const fieldsPreferences = useActionsDraftStore((s) => s.fieldsPreferences);
   const upsertAction = useActionsDraftStore((s) => s.upsertAction);
@@ -156,8 +162,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
           const range = triggerParamRange(fieldsPreferences, values.triggerType);
           const usesInterval = triggerUsesInterval(fieldsPreferences, values.triggerType);
           const param = resolveParam(values, entries);
-          const targetType =
-            entries.find((e) => e.ip === values.targetIp)?.device.type ?? '';
+          const targetType = entries.find((e) => e.ip === values.targetIp)?.device.type ?? '';
           const commands = commandsFor(targetType);
           const activeCommand = commands.find((c) => c.id === values.commandId);
 
@@ -268,7 +273,9 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="on">{actionTypeLabel(t, ACTION_TYPE.switchOn)}</SelectItem>
+                          <SelectItem value="on">
+                            {actionTypeLabel(t, ACTION_TYPE.switchOn)}
+                          </SelectItem>
                           <SelectItem value="off">
                             {actionTypeLabel(t, ACTION_TYPE.switchOff)}
                           </SelectItem>
@@ -365,9 +372,7 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                         </p>
                       ) : null}
                       {!isHttpUrl(param) ? (
-                        <p className="text-xs text-muted-foreground">
-                          {t('wizard.urlRequired')}
-                        </p>
+                        <p className="text-xs text-muted-foreground">{t('wizard.urlRequired')}</p>
                       ) : null}
                     </>
                   ) : null}
@@ -385,7 +390,10 @@ export function ActionWizard({ deviceIp, inputId, actionId, existing, onClose }:
                     label={t('wizard.summaryName')}
                     value={values.name || t('wizard.summaryNoName')}
                   />
-                  <Summary label={t('wizard.summaryKind')} value={actionKindLabel(t, values.kind)} />
+                  <Summary
+                    label={t('wizard.summaryKind')}
+                    value={actionKindLabel(t, values.kind)}
+                  />
                   {values.kind === 'switch-device' ? (
                     <Summary
                       label={t('wizard.summaryOperation')}

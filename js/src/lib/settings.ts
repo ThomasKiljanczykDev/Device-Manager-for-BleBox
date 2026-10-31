@@ -25,10 +25,7 @@ export async function getRemoteAccess(ip: string): Promise<RemoteAccess> {
 /** `POST /api/settings/set` — flips just `tunnel.enabled`. */
 export async function setRemoteAccess(ip: string, enabled: boolean): Promise<void> {
   await unwrap(
-    commands.deviceSettingsSet(
-      ip,
-      JSON.stringify({ tunnel: { enabled: enabled ? 1 : 0 } }),
-    ),
+    commands.deviceSettingsSet(ip, JSON.stringify({ tunnel: { enabled: enabled ? 1 : 0 } })),
   );
 }
 
@@ -37,9 +34,7 @@ export async function setRemoteAccess(ip: string, enabled: boolean): Promise<voi
  * BleBox enforces 0–31 characters; callers should clamp before calling.
  */
 export async function setDeviceName(ip: string, name: string): Promise<void> {
-  await unwrap(
-    commands.deviceSettingsSet(ip, JSON.stringify({ deviceName: name })),
-  );
+  await unwrap(commands.deviceSettingsSet(ip, JSON.stringify({ deviceName: name })));
 }
 
 /**
@@ -62,9 +57,7 @@ export async function getDeviceSettings(ip: string): Promise<DeviceSettings> {
     buttonsBacklight: settings.buttonsBacklight
       ? settings.buttonsBacklight.enabled === 1
       : undefined,
-    powerMeasuring: settings.powerMeasuring
-      ? settings.powerMeasuring.enabled === 1
-      : undefined,
+    powerMeasuring: settings.powerMeasuring ? settings.powerMeasuring.enabled === 1 : undefined,
   };
 }
 
@@ -74,10 +67,7 @@ export async function getDeviceSettings(ip: string): Promise<DeviceSettings> {
  * those sub-objects (e.g. `powerMeasuring.safetyValue`) ride along on the
  * device's merge.
  */
-export async function setDeviceSettings(
-  ip: string,
-  partial: DeviceSettings,
-): Promise<void> {
+export async function setDeviceSettings(ip: string, partial: DeviceSettings): Promise<void> {
   const body: Record<string, { enabled: 0 | 1 }> = {};
   if (partial.statusLed !== undefined) {
     body.statusLed = { enabled: partial.statusLed ? 1 : 0 };
