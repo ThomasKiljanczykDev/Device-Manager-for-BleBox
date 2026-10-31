@@ -1,7 +1,8 @@
 import { useMemo, useRef, useState } from 'react';
 import { createFileRoute, useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import Editor, { type Monaco, type OnMount } from '@monaco-editor/react';
+import Editor, { type OnMount } from '@monaco-editor/react';
+import type * as MonacoApi from 'monaco-editor';
 import {
   ACTION_TYPE,
   actionsDocumentSchema,
@@ -53,8 +54,10 @@ function JsonEditorDialog() {
 
   const close = () => navigate({ to: '/devices/$deviceIp', params: { deviceIp } });
 
-  const configureSchema = (monaco: Monaco) => {
-    monaco.languages.json.jsonDefaults.setDiagnosticsOptions({
+  // Not the `Monaco` type from @monaco-editor/react: it imports a path that
+  // monaco-editor no longer exports, so it resolves to `any`.
+  const configureSchema = (monaco: typeof MonacoApi) => {
+    monaco.json.jsonDefaults.setDiagnosticsOptions({
       validate: true,
       enableSchemaRequest: false,
       schemas: [{ uri: 'blebox://actions.json', fileMatch: ['*'], schema }],
