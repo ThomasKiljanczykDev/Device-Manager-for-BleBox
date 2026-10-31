@@ -26,25 +26,24 @@ jobs:
       - uses: actions/setup-node@v6
         with:
           node-version: 24
-      - name: Enable Yarn 4
-        run: |
-          corepack enable
-          corepack prepare "$(node -p "require('./js/package.json').packageManager")" --activate
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: js/package.json
       - name: Install dependencies
         working-directory: js
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
       - name: Lint
         working-directory: js
-        run: yarn lint
+        run: pnpm lint
       - name: Typecheck
         working-directory: js
-        run: yarn typecheck
+        run: pnpm typecheck
       - name: Test
         working-directory: js
-        run: yarn test
+        run: pnpm test
       - name: Build
         working-directory: js
-        run: yarn build
+        run: pnpm build
 
   rust:
     name: Rust

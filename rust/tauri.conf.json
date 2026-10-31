@@ -6,8 +6,8 @@
   "build": {
     "frontendDist": "../js/dist",
     "devUrl": "http://localhost:5173",
-    "beforeDevCommand": "yarn --cwd js dev",
-    "beforeBuildCommand": "yarn --cwd js build"
+    "beforeDevCommand": "pnpm --dir js dev",
+    "beforeBuildCommand": "pnpm --dir js build"
   },
   "app": {
     "windows": [

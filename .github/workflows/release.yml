@@ -106,14 +106,13 @@ jobs:
         with:
           node-version: 24
 
-      - name: Enable Yarn 4
-        run: |
-          corepack enable
-          corepack prepare "$(node -p "require('./js/package.json').packageManager")" --activate
+      - uses: pnpm/action-setup@v6
+        with:
+          package_json_file: js/package.json
 
       - name: Install frontend dependencies
         working-directory: js
-        run: yarn install --immutable
+        run: pnpm install --frozen-lockfile
 
       - uses: dtolnay/rust-toolchain@stable
         with:
