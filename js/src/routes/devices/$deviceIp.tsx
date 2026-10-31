@@ -106,7 +106,9 @@ function DeviceDetail() {
           <div className="mt-1 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
             <Badge variant="secondary">{info.data?.type ?? t('deviceDetail.unknownType')}</Badge>
             {info.data?.apiLevel ? (
-              <Badge variant="outline">{t('deviceDetail.apiLevel', { level: info.data.apiLevel })}</Badge>
+              <Badge variant="outline">
+                {t('deviceDetail.apiLevel', { level: info.data.apiLevel })}
+              </Badge>
             ) : null}
             <span>{deviceIp}</span>
             <span className="flex items-center gap-1">

@@ -5,7 +5,6 @@
   // tsconfig.app.json so tools that read the root config — e.g. the shadcn CLI —
   // resolve the `@/*` alias and place generated files under `src/`.
   "compilerOptions": {
-    "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
     }

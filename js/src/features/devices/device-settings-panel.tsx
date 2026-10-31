@@ -8,11 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { queryKeys } from '@/lib/query';
-import {
-  getDeviceSettings,
-  setDeviceSettings,
-  type DeviceSettings,
-} from '@/lib/settings';
+import { getDeviceSettings, setDeviceSettings, type DeviceSettings } from '@/lib/settings';
 
 interface DeviceSettingsPanelProps {
   deviceIp: string;
@@ -95,9 +91,7 @@ export function DeviceSettingsPanel({ deviceIp }: DeviceSettingsPanelProps) {
                   <Switch
                     id={`device-settings-${field}`}
                     checked={!!form[field]}
-                    onCheckedChange={(next) =>
-                      setEdited({ ...(edited ?? loaded), [field]: next })
-                    }
+                    onCheckedChange={(next) => setEdited({ ...(edited ?? loaded), [field]: next })}
                   />
                   <Label htmlFor={`device-settings-${field}`} className="font-normal">
                     {labelFor[field]}

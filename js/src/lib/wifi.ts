@@ -40,10 +40,6 @@ export async function scanWifiNetworks(ip: string): Promise<WifiNetwork[]> {
  * `POST /api/wifi/connect` — joins the device to a network. `pwd` is `null`
  * for an open network. The device may move off the current LAN as a result.
  */
-export async function connectWifi(
-  ip: string,
-  ssid: string,
-  pwd: string | null,
-): Promise<void> {
+export async function connectWifi(ip: string, ssid: string, pwd: string | null): Promise<void> {
   await unwrap(commands.deviceWifiConnect(ip, JSON.stringify({ ssid, pwd })));
 }

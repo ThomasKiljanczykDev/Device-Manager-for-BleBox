@@ -83,9 +83,7 @@ export function PowerMeasurementsPanel({ deviceIp }: PowerMeasurementsPanelProps
             <div>
               <dt className="text-xs text-muted-foreground">{t('devicePanel.activePower')}</dt>
               <dd className="font-mono text-lg">
-                {activePower !== undefined
-                  ? t('devicePanel.watts', { value: activePower })
-                  : '—'}
+                {activePower !== undefined ? t('devicePanel.watts', { value: activePower }) : '—'}
               </dd>
             </div>
             <div>

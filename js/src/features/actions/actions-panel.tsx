@@ -3,7 +3,14 @@ import { useTranslation } from 'react-i18next';
 import { Pencil, Plus, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
 import { triggerTypeLabel } from '@/i18n/labels';
 import { useActionsDraftStore } from '@/stores/actions-draft';
 import { actionSummary, configuredActions, firstEmptySlotId } from './helpers';

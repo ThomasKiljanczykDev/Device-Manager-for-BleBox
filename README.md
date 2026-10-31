@@ -8,27 +8,29 @@ devices over the local network. macOS, single user, v1.
 
 - A Rust toolchain — install via [rustup](https://rustup.rs)
 - The Tauri CLI: `cargo install tauri-cli --version "^2.0" --locked`
-- Node.js 24 LTS, with Corepack enabled (`corepack enable`)
+- Node.js 26 LTS
+- [pnpm](https://pnpm.io/installation) 12, matching the version pinned in the
+  root `package.json`
 - BleBox devices reachable on the LAN
 
 ## Setup & running
 
 ```sh
-yarn --cwd js install   # install the React app's dependencies
-yarn dev                # launch the desktop app
+pnpm --dir js install   # install the React app's dependencies
+pnpm dev                # launch the desktop app
 ```
 
-`yarn dev` runs `cargo tauri dev`, which builds the Rust backend, starts Vite
+`pnpm dev` runs `cargo tauri dev`, which builds the Rust backend, starts Vite
 for the React frontend, and opens the app window. The first run compiles the
 Rust dependency tree and takes a few minutes; later runs are fast.
 
-Build the `.app` bundle with `yarn build` (output under
+Build the `.app` bundle with `pnpm build` (output under
 `rust/target/release/bundle/macos/`).
 
 Configuration is optional — see `.env.example` for the two timeout overrides;
 export them in your shell before launching if you want non-default values.
 
-Other scripts (run from `js/`): `yarn --cwd js lint`, `… typecheck`, `… test`.
+Other scripts (run from `js/`): `pnpm --dir js lint`, `… typecheck`, `… test`.
 Rust checks: `cargo test`, `cargo clippy` (run inside `rust/`).
 
 ## Architecture

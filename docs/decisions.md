@@ -3,6 +3,21 @@
 Architecture decision records, newest first. This is a dev-only v1 for a single
 user on macOS — choices favour pragmatism over generality.
 
+## pnpm with the default isolated linker
+
+`js/` moved from Yarn Berry to pnpm 12, pinned via `packageManager` in the root
+`package.json`. This supersedes the "Yarn Berry with `node-modules` linker" decision below. The
+lockfile was generated with `pnpm import`, so resolved versions carried over.
+The isolated linker works as is and no dependency has an install script, so
+there is no `pnpm-workspace.yaml`. CI installs pnpm with `pnpm/action-setup`.
+
+The pin lives only at the root. Standalone pnpm honours it for commands run from
+the root but not in `js/` or with `--dir js`, so the installed pnpm must itself
+be version 12. Node 26 no longer ships Corepack, which would walk up to the pin.
+CI is unaffected: `pnpm/action-setup` installs the pinned version. The pin makes
+pnpm write a root `pnpm-lock.yaml` holding only pnpm's own integrity hashes; it
+is committed.
+
 ## Migrated to a single Tauri desktop app
 
 The two-process architecture (a React SPA talking HTTP to a Fastify "companion"
@@ -48,7 +63,7 @@ combination that resolves and compiles together.
 `getWifiStatus` is accepted but ignored; there is no Tauri equivalent.
 
 **Orchestration.** The root `package.json` is a thin script alias layer:
-`yarn dev` runs `cd rust && cargo tauri dev`. The Tauri CLI is found by running
+`pnpm dev` runs `cd rust && cargo tauri dev`. The Tauri CLI is found by running
 it from inside `rust/` (it has no built-in support for a non-`src-tauri/` dir).
 
 **Env / logging.** Only `DISCOVERY_TIMEOUT_MS` and `DEVICE_PROBE_TIMEOUT_MS`

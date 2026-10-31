@@ -28,9 +28,7 @@ const OTA_POLL_INTERVAL_MS = 5_000;
 const OTA_TIMEOUT_MS = 8 * 60 * 1000;
 
 type Phase =
-  | { kind: 'pending' }
-  | { kind: 'done'; toVersion: string }
-  | { kind: 'error'; message: string };
+  { kind: 'pending' } | { kind: 'done'; toVersion: string } | { kind: 'error'; message: string };
 
 /**
  * Triggers a firmware update on the device and polls `/info` until the
